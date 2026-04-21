@@ -16,7 +16,8 @@
   "scripts": {
     "build": "tsc -b",
     "build:shared": "npm run build --workspace @infrastructure-as-words/contracts && npm run build --workspace @infrastructure-as-words/infra-config",
-    "build:all": "npm run build && npm run build:web && npm run build:infra",
+    "build:api": "npm run build --workspace @infrastructure-as-words/api",
+    "build:all": "npm run build && npm run build:api && npm run build:web && npm run build:infra",
     "build:web": "npm run build --workspace @infrastructure-as-words/web",
     "build:infra": "npm run build --workspace @infrastructure-as-words/infra",
     "clean": "rm -rf node_modules .cache packages/contracts/dist services/api/dist infra/config/dist web/.next web/out infra/terraform/.terraform infra/terraform/.generated packages/contracts/tsconfig.tsbuildinfo services/api/tsconfig.tsbuildinfo infra/config/tsconfig.tsbuildinfo",
