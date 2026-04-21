@@ -2283,6 +2283,133 @@ textarea {
   background: rgba(255, 255, 255, 0.9);
 }
 
+.iaw-governanceIntro,
+.iaw-emptyHint,
+.iaw-inlineError {
+  margin: 0;
+}
+
+.iaw-governanceIntro,
+.iaw-emptyHint {
+  color: var(--muted);
+}
+
+.iaw-inlineError {
+  color: #991b1b;
+}
+
+.iaw-emptyStateTitle {
+  margin: 0;
+  font-size: 1.05rem;
+  letter-spacing: -0.03em;
+}
+
+.iaw-observabilityPage,
+.iaw-observabilityLayout,
+.iaw-observabilityPanel,
+.iaw-observabilityStats,
+.iaw-observabilityMetricGrid,
+.iaw-observabilityAlarmList,
+.iaw-observabilitySubscriptionList,
+.iaw-observabilityEventList,
+.iaw-observabilityHeaderMeta {
+  display: grid;
+  gap: 16px;
+}
+
+.iaw-observabilityHeader,
+.iaw-observabilityPanelHeader,
+.iaw-observabilityAlarmHead,
+.iaw-observabilityEventHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.iaw-observabilityStats {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
+.iaw-observabilityStat,
+.iaw-observabilityMetricCard,
+.iaw-observabilityAlarmCard,
+.iaw-observabilitySubscriptionCard,
+.iaw-observabilityEventCard,
+.iaw-observabilityServiceCard,
+.iaw-observabilityPanel {
+  padding: 16px 18px;
+  border: 1px solid rgba(17, 25, 37, 0.08);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.72);
+}
+
+.iaw-observabilityStat,
+.iaw-observabilityMetricCard,
+.iaw-observabilitySubscriptionCard {
+  display: grid;
+  gap: 6px;
+}
+
+.iaw-observabilityStat strong,
+.iaw-observabilityMetricCard strong {
+  font-size: 1.08rem;
+  letter-spacing: -0.04em;
+}
+
+.iaw-observabilityLayout {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: start;
+}
+
+.iaw-observabilityPanelWide {
+  grid-column: 1 / -1;
+}
+
+.iaw-observabilityServiceCard h2,
+.iaw-observabilityAlarmCard strong,
+.iaw-observabilitySubscriptionCard strong,
+.iaw-observabilityEventCard strong {
+  margin: 0;
+  font-size: 1rem;
+  letter-spacing: -0.03em;
+}
+
+.iaw-observabilityMetricGrid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.iaw-observabilityAlarmBadge {
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-family: var(--font-meta), monospace;
+  font-size: 0.68rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.iaw-observabilityAlarmCritical {
+  background: rgba(153, 27, 27, 0.12);
+  color: #991b1b;
+}
+
+.iaw-observabilityAlarmWarn {
+  background: rgba(180, 83, 9, 0.12);
+  color: #92400e;
+}
+
+.iaw-observabilityAlarmOk {
+  background: rgba(21, 128, 61, 0.12);
+  color: #166534;
+}
+
+.iaw-observabilityAlarmReason,
+.iaw-observabilityEventCard p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.55;
+}
+
 .iaw-governanceFooter {
   justify-content: flex-start;
   flex-wrap: wrap;
@@ -2360,6 +2487,9 @@ textarea {
   .iaw-proofRail,
   .iaw-builderSignals,
   .iaw-starterList,
+  .iaw-observabilityStats,
+  .iaw-observabilityLayout,
+  .iaw-observabilityMetricGrid,
   .iaw-governanceObservability,
   .iaw-governanceBudgetStats {
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -2410,6 +2540,24 @@ textarea {
 
   .iaw-stageLanding .iaw-stageShell {
     min-height: 520px;
+  }
+}
+
+@media (max-width: 720px) {
+  .iaw-observabilityHeader,
+  .iaw-observabilityPanelHeader,
+  .iaw-observabilityAlarmHead,
+  .iaw-observabilityEventHead {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .iaw-observabilityStats,
+  .iaw-observabilityLayout,
+  .iaw-observabilityMetricGrid,
+  .iaw-governanceObservability,
+  .iaw-governanceBudgetStats {
+    grid-template-columns: 1fr;
   }
 }
 

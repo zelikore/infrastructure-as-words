@@ -4,6 +4,7 @@ import type {
   Context,
 } from "aws-lambda";
 import {
+  adminObservabilityResponseSchema,
   generationSettingsInputSchema,
   generationSettingsResponseSchema,
   submissionDetailResponseSchema,
@@ -22,6 +23,7 @@ import {
 } from "./api-routing.js";
 import { createArtifactDownloadUrl } from "./artifact-storage.js";
 import { isAdminRequest } from "./admin-auth.js";
+import { loadAdminObservabilitySnapshot } from "./admin-observability.js";
 import { getEnvironment } from "./environment.js";
 import { getGenerationBudgetStatus } from "./generation-budget.js";
 import {
@@ -195,6 +197,26 @@ const handleApiRequest = async (
           budget,
           observability: buildObservabilityConsoleLinks(),
         }),
+      ),
+    };
+  }
+
+  if (routeKey === "GET /v1/admin/observability") {
+    const request = requireAuthenticatedRequest(event);
+    if (!(await isAdminRequest(request))) {
+      return {
+        userSub: request.sub,
+        response: forbiddenResponse(),
+      };
+    }
+
+    return {
+      userSub: request.sub,
+      response: jsonResponse(
+        200,
+        adminObservabilityResponseSchema.parse(
+          await loadAdminObservabilitySnapshot(),
+        ),
       ),
     };
   }

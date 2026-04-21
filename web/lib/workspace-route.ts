@@ -1,4 +1,9 @@
-export type WorkspaceView = "create" | "history" | "run" | "admin";
+export type WorkspaceView =
+  | "create"
+  | "history"
+  | "run"
+  | "admin"
+  | "observability";
 
 export type WorkspaceRoute = {
   view: WorkspaceView;
@@ -6,7 +11,7 @@ export type WorkspaceRoute = {
 };
 
 const DEFAULT_ROUTE: WorkspaceRoute = {
-  view: "create"
+  view: "create",
 };
 
 export const parseWorkspaceHash = (hash: string): WorkspaceRoute => {
@@ -20,14 +25,18 @@ export const parseWorkspaceHash = (hash: string): WorkspaceRoute => {
     return submissionId
       ? {
           view: "run",
-          submissionId
+          submissionId,
         }
       : DEFAULT_ROUTE;
   }
 
-  if (normalized === "history" || normalized === "admin") {
+  if (
+    normalized === "history" ||
+    normalized === "admin" ||
+    normalized === "observability"
+  ) {
     return {
-      view: normalized
+      view: normalized,
     };
   }
 
@@ -39,7 +48,11 @@ export const formatWorkspaceHash = (route: WorkspaceRoute): string => {
     return `run/${route.submissionId}`;
   }
 
-  if (route.view === "history" || route.view === "admin") {
+  if (
+    route.view === "history" ||
+    route.view === "admin" ||
+    route.view === "observability"
+  ) {
     return route.view;
   }
 

@@ -12,6 +12,16 @@ locals {
   common_tags = merge(var.tags, {
     Module = "http-api-service"
   })
+  alarm_prefix = "${replace(lower(lookup(var.tags, "Project", "platform")), " ", "-")}-${var.environment_name}"
+  observability_alarm_names = [
+    "${local.alarm_prefix}-lambda-errors",
+    "${local.alarm_prefix}-lambda-throttles",
+    "${local.alarm_prefix}-lambda-duration-p95",
+    "${local.alarm_prefix}-api-5xx",
+    "${local.alarm_prefix}-api-latency-p95",
+    "${local.alarm_prefix}-dynamodb-read-throttles",
+    "${local.alarm_prefix}-dynamodb-write-throttles"
+  ]
 }
 
 resource "aws_iam_role" "api" {
@@ -128,6 +138,44 @@ resource "aws_iam_role_policy" "api_ssm" {
   })
 }
 
+resource "aws_iam_role_policy" "api_observability_read" {
+  name = "${var.lambda_function_name}-observability-read"
+  role = aws_iam_role.api.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = [
+          "cloudwatch:DescribeAlarms",
+          "cloudwatch:GetMetricData"
+        ]
+        Effect   = "Allow"
+        Resource = "*"
+      },
+      {
+        Action = [
+          "logs:FilterLogEvents"
+        ]
+        Effect = "Allow"
+        Resource = [
+          aws_cloudwatch_log_group.api_lambda.arn,
+          "${aws_cloudwatch_log_group.api_lambda.arn}:*",
+          aws_cloudwatch_log_group.api_access.arn,
+          "${aws_cloudwatch_log_group.api_access.arn}:*"
+        ]
+      },
+      {
+        Action = [
+          "sns:ListSubscriptionsByTopic"
+        ]
+        Effect   = "Allow"
+        Resource = var.observability_alerts_topic_arn
+      }
+    ]
+  })
+}
+
 resource "aws_cloudwatch_log_group" "api_lambda" {
   name              = "/aws/lambda/${var.lambda_function_name}"
   retention_in_days = 30
@@ -156,7 +204,10 @@ resource "aws_lambda_function" "api" {
       CURRENT_FUNCTION_NAME               = var.lambda_function_name
       ADMIN_EMAIL_PARAMETER_NAME          = var.admin_email_parameter_name
       OBSERVABILITY_DASHBOARD_NAME        = var.observability_dashboard_name
+      OBSERVABILITY_ALARM_NAMES           = join(",", local.observability_alarm_names)
       OBSERVABILITY_ALERTS_TOPIC_ARN      = var.observability_alerts_topic_arn
+      OBSERVABILITY_API_ID                = aws_apigatewayv2_api.http.id
+      OBSERVABILITY_API_STAGE_NAME        = "$default"
       OBSERVABILITY_LAMBDA_LOG_GROUP_NAME = var.observability_lambda_log_group_name
       OBSERVABILITY_API_LOG_GROUP_NAME    = var.observability_api_log_group_name
     }
@@ -299,6 +350,17 @@ resource "aws_apigatewayv2_route" "get_submission" {
 resource "aws_apigatewayv2_route" "get_admin_settings" {
   api_id             = aws_apigatewayv2_api.http.id
   route_key          = "GET /v1/admin/settings"
+  target             = "integrations/${aws_apigatewayv2_integration.lambda.id}"
+  authorizer_id      = aws_apigatewayv2_authorizer.jwt.id
+  authorization_type = "JWT"
+  authorization_scopes = [
+    var.cognito_write_scope
+  ]
+}
+
+resource "aws_apigatewayv2_route" "get_admin_observability" {
+  api_id             = aws_apigatewayv2_api.http.id
+  route_key          = "GET /v1/admin/observability"
   target             = "integrations/${aws_apigatewayv2_integration.lambda.id}"
   authorizer_id      = aws_apigatewayv2_authorizer.jwt.id
   authorization_type = "JWT"

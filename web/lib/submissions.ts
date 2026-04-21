@@ -1,4 +1,5 @@
 import {
+  adminObservabilityResponseSchema,
   generationSettingsInputSchema,
   generationSettingsResponseSchema,
   submissionDetailResponseSchema,
@@ -7,17 +8,18 @@ import {
   submissionsResponseSchema,
   type GenerationSettingsResponse,
   type GenerationSettingsInput,
+  type AdminObservabilityResponse,
   type SubmissionDetail,
   type SubmissionInput,
   type SubmissionSummary,
   type WorkspaceProfile,
-  workspaceProfileResponseSchema
+  workspaceProfileResponseSchema,
 } from "@infrastructure-as-words/contracts";
 import { clearSession, getSession } from "./auth";
 import { getRuntimeConfig } from "./runtime";
 
 const createAuthorizedRequest = async (
-  input: RequestInit
+  input: RequestInit,
 ): Promise<{
   urlPrefix: string;
   request: RequestInit;
@@ -35,9 +37,9 @@ const createAuthorizedRequest = async (
       ...input,
       headers: {
         ...(input.headers ? input.headers : {}),
-        authorization: `Bearer ${session.accessToken}`
-      }
-    }
+        authorization: `Bearer ${session.accessToken}`,
+      },
+    },
   };
 };
 
@@ -68,9 +70,11 @@ const handleApiFailure = async (response: Response): Promise<never> => {
   throw new Error("The API request failed.");
 };
 
-export const fetchSubmissionHistory = async (): Promise<SubmissionSummary[]> => {
+export const fetchSubmissionHistory = async (): Promise<
+  SubmissionSummary[]
+> => {
   const { urlPrefix, request } = await createAuthorizedRequest({
-    method: "GET"
+    method: "GET",
   });
   const response = await fetch(`${urlPrefix}/v1/submissions`, request);
   if (!response.ok) {
@@ -82,7 +86,7 @@ export const fetchSubmissionHistory = async (): Promise<SubmissionSummary[]> => 
 
 export const fetchWorkspaceProfile = async (): Promise<WorkspaceProfile> => {
   const { urlPrefix, request } = await createAuthorizedRequest({
-    method: "GET"
+    method: "GET",
   });
   const response = await fetch(`${urlPrefix}/v1/workspace`, request);
   if (!response.ok) {
@@ -92,11 +96,16 @@ export const fetchWorkspaceProfile = async (): Promise<WorkspaceProfile> => {
   return workspaceProfileResponseSchema.parse(await response.json()).profile;
 };
 
-export const fetchSubmissionDetail = async (submissionId: string): Promise<SubmissionDetail> => {
+export const fetchSubmissionDetail = async (
+  submissionId: string,
+): Promise<SubmissionDetail> => {
   const { urlPrefix, request } = await createAuthorizedRequest({
-    method: "GET"
+    method: "GET",
   });
-  const response = await fetch(`${urlPrefix}/v1/submissions/${submissionId}`, request);
+  const response = await fetch(
+    `${urlPrefix}/v1/submissions/${submissionId}`,
+    request,
+  );
   if (!response.ok) {
     return handleApiFailure(response);
   }
@@ -104,14 +113,16 @@ export const fetchSubmissionDetail = async (submissionId: string): Promise<Submi
   return submissionDetailResponseSchema.parse(await response.json()).submission;
 };
 
-export const createSubmission = async (input: SubmissionInput): Promise<SubmissionSummary> => {
+export const createSubmission = async (
+  input: SubmissionInput,
+): Promise<SubmissionSummary> => {
   const payload = submissionInputSchema.parse(input);
   const { urlPrefix, request } = await createAuthorizedRequest({
     method: "POST",
     headers: {
-      "content-type": "application/json"
+      "content-type": "application/json",
     },
-    body: JSON.stringify(payload)
+    body: JSON.stringify(payload),
   });
 
   const response = await fetch(`${urlPrefix}/v1/submissions`, request);
@@ -122,28 +133,29 @@ export const createSubmission = async (input: SubmissionInput): Promise<Submissi
   return submissionSchema.parse(await response.json());
 };
 
-export const fetchGenerationSettings = async (): Promise<GenerationSettingsResponse> => {
-  const { urlPrefix, request } = await createAuthorizedRequest({
-    method: "GET"
-  });
-  const response = await fetch(`${urlPrefix}/v1/admin/settings`, request);
-  if (!response.ok) {
-    return handleApiFailure(response);
-  }
+export const fetchGenerationSettings =
+  async (): Promise<GenerationSettingsResponse> => {
+    const { urlPrefix, request } = await createAuthorizedRequest({
+      method: "GET",
+    });
+    const response = await fetch(`${urlPrefix}/v1/admin/settings`, request);
+    if (!response.ok) {
+      return handleApiFailure(response);
+    }
 
-  return generationSettingsResponseSchema.parse(await response.json());
-};
+    return generationSettingsResponseSchema.parse(await response.json());
+  };
 
 export const updateGenerationSettings = async (
-  input: GenerationSettingsInput
+  input: GenerationSettingsInput,
 ): Promise<GenerationSettingsResponse> => {
   const payload = generationSettingsInputSchema.parse(input);
   const { urlPrefix, request } = await createAuthorizedRequest({
     method: "PUT",
     headers: {
-      "content-type": "application/json"
+      "content-type": "application/json",
     },
-    body: JSON.stringify(payload)
+    body: JSON.stringify(payload),
   });
 
   const response = await fetch(`${urlPrefix}/v1/admin/settings`, request);
@@ -153,3 +165,19 @@ export const updateGenerationSettings = async (
 
   return generationSettingsResponseSchema.parse(await response.json());
 };
+
+export const fetchAdminObservability =
+  async (): Promise<AdminObservabilityResponse> => {
+    const { urlPrefix, request } = await createAuthorizedRequest({
+      method: "GET",
+    });
+    const response = await fetch(
+      `${urlPrefix}/v1/admin/observability`,
+      request,
+    );
+    if (!response.ok) {
+      return handleApiFailure(response);
+    }
+
+    return adminObservabilityResponseSchema.parse(await response.json());
+  };

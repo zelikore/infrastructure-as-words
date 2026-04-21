@@ -256,7 +256,11 @@ export function useWorkbenchState() {
       return;
     }
 
-    if (activeView === "admin" && workspaceProfile && !canAccessGovernance) {
+    if (
+      (activeView === "admin" || activeView === "observability") &&
+      workspaceProfile &&
+      !canAccessGovernance
+    ) {
       syncRoute(
         {
           view: "create",

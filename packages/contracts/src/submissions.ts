@@ -244,6 +244,61 @@ export const observabilityConsoleLinksSchema = z.object({
   notificationsUrl: z.url(),
 });
 
+export const observabilityAlarmStateSchema = z.enum([
+  "OK",
+  "ALARM",
+  "INSUFFICIENT_DATA",
+]);
+
+export const observabilityMetricSchema = z.object({
+  id: shortText(64),
+  label: shortText(80),
+  value: z.number().finite().nonnegative(),
+  displayValue: shortText(32),
+  unit: z.enum(["count", "milliseconds"]),
+});
+
+export const observabilityServiceSnapshotSchema = z.object({
+  id: z.enum(["lambda", "api", "dynamodb"]),
+  label: shortText(40),
+  metrics: z.array(observabilityMetricSchema).min(1).max(6),
+});
+
+export const observabilityAlarmSchema = z.object({
+  name: shortText(160),
+  state: observabilityAlarmStateSchema,
+  reason: z.string().trim().min(1).max(2_000),
+  updatedAt: timestampSchema,
+});
+
+export const observabilitySubscriptionSchema = z.object({
+  protocol: shortText(24),
+  endpoint: z.string().trim().min(1).max(320),
+  status: shortText(40),
+});
+
+export const observabilityLogEventSchema = z.object({
+  id: z.string().trim().min(1).max(160),
+  source: z.enum(["lambda", "api"]),
+  timestamp: timestampSchema,
+  message: z.string().trim().min(1).max(2_000),
+});
+
+export const adminObservabilityResponseSchema = z.object({
+  generatedAt: timestampSchema,
+  periodMinutes: z.int().positive().max(1_440),
+  links: observabilityConsoleLinksSchema,
+  alarmSummary: z.object({
+    okCount: z.int().nonnegative(),
+    alarmCount: z.int().nonnegative(),
+    insufficientDataCount: z.int().nonnegative(),
+  }),
+  services: z.array(observabilityServiceSnapshotSchema).min(1).max(4),
+  alarms: z.array(observabilityAlarmSchema).max(16),
+  subscriptions: z.array(observabilitySubscriptionSchema).max(16),
+  recentEvents: z.array(observabilityLogEventSchema).max(12),
+});
+
 export const submissionsResponseSchema = z.object({
   submissions: z.array(submissionSummarySchema),
 });
@@ -289,6 +344,21 @@ export type BudgetStatus = z.infer<typeof budgetStatusSchema>;
 export type WorkspaceProfile = z.infer<typeof workspaceProfileSchema>;
 export type ObservabilityConsoleLinks = z.infer<
   typeof observabilityConsoleLinksSchema
+>;
+export type ObservabilityAlarmState = z.infer<
+  typeof observabilityAlarmStateSchema
+>;
+export type ObservabilityMetric = z.infer<typeof observabilityMetricSchema>;
+export type ObservabilityServiceSnapshot = z.infer<
+  typeof observabilityServiceSnapshotSchema
+>;
+export type ObservabilityAlarm = z.infer<typeof observabilityAlarmSchema>;
+export type ObservabilitySubscription = z.infer<
+  typeof observabilitySubscriptionSchema
+>;
+export type ObservabilityLogEvent = z.infer<typeof observabilityLogEventSchema>;
+export type AdminObservabilityResponse = z.infer<
+  typeof adminObservabilityResponseSchema
 >;
 export type SubmissionsResponse = z.infer<typeof submissionsResponseSchema>;
 export type SubmissionDetailResponse = z.infer<

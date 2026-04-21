@@ -14,8 +14,14 @@ const environment: ApiEnvironment = {
   ADMIN_EMAIL_ALLOWLIST: "architect@example.com",
   ADMIN_EMAIL_PARAMETER_NAME: "/infrastructure-as-words/admin-email",
   OBSERVABILITY_DASHBOARD_NAME: "infrastructure-as-words-prod-observability",
+  OBSERVABILITY_ALARM_NAMES: [
+    "infrastructure-as-words-prod-lambda-errors",
+    "infrastructure-as-words-prod-api-5xx",
+  ],
   OBSERVABILITY_ALERTS_TOPIC_ARN:
     "arn:aws:sns:us-west-2:123456789012:infrastructure-as-words-prod-alerts",
+  OBSERVABILITY_API_ID: "a1b2c3d4",
+  OBSERVABILITY_API_STAGE_NAME: "$default",
   OBSERVABILITY_LAMBDA_LOG_GROUP_NAME: "/aws/lambda/iaw-prod-api",
   OBSERVABILITY_API_LOG_GROUP_NAME:
     "/aws/apigateway/prod-infrastructure-as-words",
