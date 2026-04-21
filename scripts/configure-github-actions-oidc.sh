@@ -3,10 +3,11 @@
 set -euo pipefail
 
 readonly OIDC_URL="https://token.actions.githubusercontent.com"
-readonly DEFAULT_DEPLOY_ROLE_NAME="GitHubActionsInfrastructureAsWordsDeploy"
+readonly DEFAULT_DEV_DEPLOY_ROLE_NAME="GitHubActionsInfrastructureAsWordsDeployDev"
+readonly DEFAULT_PROD_DEPLOY_ROLE_NAME="GitHubActionsInfrastructureAsWordsDeployProd"
 readonly DEFAULT_REVIEW_ROLE_NAME="GitHubActionsInfrastructureAsWordsReview"
 readonly DEFAULT_AWS_REGION="us-west-2"
-readonly DEFAULT_HOSTED_ZONE_ID="Z04489831QPP59H15P0H0"
+readonly DEFAULT_HOSTED_ZONE_NAME="infrastructure-as-words.com"
 
 repo_slug_from_git() {
   git remote get-url origin \
@@ -42,10 +43,31 @@ ensure_oidc_provider() {
   printf '%s\n' "${provider_arn}"
 }
 
+lookup_hosted_zone_id() {
+  local hosted_zone_name="${1%.}."
+  local hosted_zone_id
+
+  hosted_zone_id="$(
+    aws route53 list-hosted-zones-by-name \
+      --dns-name "${hosted_zone_name}" \
+      --query "HostedZones[?Name=='${hosted_zone_name}'] | [0].Id" \
+      --output text \
+      | sed 's#^/hostedzone/##'
+  )"
+
+  if [[ "${hosted_zone_id}" == "None" || -z "${hosted_zone_id}" ]]; then
+    echo "Could not resolve hosted zone ID for ${hosted_zone_name}." >&2
+    exit 1
+  fi
+
+  printf '%s\n' "${hosted_zone_id}"
+}
+
 write_deploy_trust_policy() {
   local path="$1"
   local provider_arn="$2"
   local repo_slug="$3"
+  local environment_name="$4"
 
   cat > "${path}" <<EOF
 {
@@ -60,10 +82,10 @@ write_deploy_trust_policy() {
       "Condition": {
         "StringEquals": {
           "token.actions.githubusercontent.com:aud": "sts.amazonaws.com",
-          "token.actions.githubusercontent.com:sub": [
-            "repo:${repo_slug}:ref:refs/heads/dev",
-            "repo:${repo_slug}:ref:refs/heads/prod"
-          ]
+          "token.actions.githubusercontent.com:sub": "repo:${repo_slug}:ref:refs/heads/${environment_name}"
+        },
+        "StringLike": {
+          "token.actions.githubusercontent.com:job_workflow_ref": "${repo_slug}/.github/workflows/deploy.yml@*"
         }
       }
     }
@@ -91,6 +113,9 @@ write_review_trust_policy() {
         "StringEquals": {
           "token.actions.githubusercontent.com:aud": "sts.amazonaws.com",
           "token.actions.githubusercontent.com:sub": "repo:${repo_slug}:pull_request"
+        },
+        "StringLike": {
+          "token.actions.githubusercontent.com:job_workflow_ref": "${repo_slug}/.github/workflows/pr-review.yml@*"
         }
       }
     }
@@ -104,30 +129,85 @@ write_deploy_permissions_policy() {
   local account_id="$2"
   local aws_region="$3"
   local hosted_zone_id="$4"
+  local environment_name="$5"
 
   local state_bucket="infrastructure-as-words-terraform-state-${account_id}"
-  local web_bucket_dev="infrastructure-as-words-web-dev-${account_id}"
-  local web_bucket_prod="infrastructure-as-words-web-prod-${account_id}"
-  local artifacts_bucket_dev="infrastructure-as-words-artifacts-dev-${account_id}"
-  local artifacts_bucket_prod="infrastructure-as-words-artifacts-prod-${account_id}"
+  local web_bucket="infrastructure-as-words-web-${environment_name}-${account_id}"
+  local artifacts_bucket="infrastructure-as-words-artifacts-${environment_name}-${account_id}"
   local lock_table="infrastructure-as-words-terraform-locks"
-  local submission_table_dev="infrastructure-as-words-submissions-dev"
-  local submission_table_prod="infrastructure-as-words-submissions-prod"
-  local lambda_dev="infrastructure-as-words-api-dev"
-  local lambda_prod="infrastructure-as-words-api-prod"
-  local lambda_role_dev="${lambda_dev}-role"
-  local lambda_role_prod="${lambda_prod}-role"
+  local submission_table="infrastructure-as-words-submissions-${environment_name}"
+  local lambda_name="infrastructure-as-words-api-${environment_name}"
+  local lambda_role="${lambda_name}-role"
   local admin_parameter_arn="arn:aws:ssm:${aws_region}:${account_id}:parameter/infrastructure-as-words/admin-email"
-  local dev_dashboard_arn="arn:aws:cloudwatch::${account_id}:dashboard/infrastructure-as-words-dev-observability"
-  local prod_dashboard_arn="arn:aws:cloudwatch::${account_id}:dashboard/infrastructure-as-words-prod-observability"
-  local dev_alarm_arn="arn:aws:cloudwatch:${aws_region}:${account_id}:alarm:infrastructure-as-words-dev-*"
-  local prod_alarm_arn="arn:aws:cloudwatch:${aws_region}:${account_id}:alarm:infrastructure-as-words-prod-*"
-  local dev_topic_arn="arn:aws:sns:${aws_region}:${account_id}:infrastructure-as-words-dev-alerts"
-  local prod_topic_arn="arn:aws:sns:${aws_region}:${account_id}:infrastructure-as-words-prod-alerts"
+  local dashboard_arn="arn:aws:cloudwatch::${account_id}:dashboard/infrastructure-as-words-${environment_name}-observability"
+  local alarm_arn="arn:aws:cloudwatch:${aws_region}:${account_id}:alarm:infrastructure-as-words-${environment_name}-*"
+  local topic_arn="arn:aws:sns:${aws_region}:${account_id}:infrastructure-as-words-${environment_name}-alerts"
   local route53_zone_arn="arn:aws:route53:::hostedzone/${hosted_zone_id}"
+  local cognito_actions_json
+  local ssm_statement=""
 
-  # Exact ARNs are used for mutable data and identity resources. Control-plane
-  # services with coarse IAM support are constrained with explicit action lists.
+  if [[ "${environment_name}" == "prod" ]]; then
+    cognito_actions_json='[
+        "cognito-idp:AdminCreateUser",
+        "cognito-idp:AdminDeleteUser",
+        "cognito-idp:AdminGetUser",
+        "cognito-idp:AdminResetUserPassword",
+        "cognito-idp:AdminSetUserPassword",
+        "cognito-idp:AdminUpdateUserAttributes",
+        "cognito-idp:CreateResourceServer",
+        "cognito-idp:CreateUserPool",
+        "cognito-idp:CreateUserPoolClient",
+        "cognito-idp:CreateUserPoolDomain",
+        "cognito-idp:DeleteResourceServer",
+        "cognito-idp:DeleteUserPool",
+        "cognito-idp:DeleteUserPoolClient",
+        "cognito-idp:DeleteUserPoolDomain",
+        "cognito-idp:DescribeUserPool",
+        "cognito-idp:DescribeUserPoolClient",
+        "cognito-idp:DescribeUserPoolDomain",
+        "cognito-idp:GetResourceServer",
+        "cognito-idp:ListResourceServers",
+        "cognito-idp:ListTagsForResource",
+        "cognito-idp:ListUserPoolClients",
+        "cognito-idp:ListUserPools",
+        "cognito-idp:ListUsers",
+        "cognito-idp:TagResource",
+        "cognito-idp:UntagResource",
+        "cognito-idp:UpdateResourceServer",
+        "cognito-idp:UpdateUserPool",
+        "cognito-idp:UpdateUserPoolClient"
+      ]'
+    ssm_statement=$(cat <<EOF
+    ,
+    {
+      "Sid": "SharedAdminParameter",
+      "Effect": "Allow",
+      "Action": [
+        "ssm:AddTagsToResource",
+        "ssm:DeleteParameter",
+        "ssm:GetParameter",
+        "ssm:ListTagsForResource",
+        "ssm:PutParameter",
+        "ssm:RemoveTagsFromResource"
+      ],
+      "Resource": "${admin_parameter_arn}"
+    }
+EOF
+)
+  else
+    cognito_actions_json='[
+        "cognito-idp:CreateUserPoolClient",
+        "cognito-idp:DeleteUserPoolClient",
+        "cognito-idp:DescribeUserPool",
+        "cognito-idp:DescribeUserPoolClient",
+        "cognito-idp:ListTagsForResource",
+        "cognito-idp:ListUserPoolClients",
+        "cognito-idp:ListUserPools",
+        "cognito-idp:TagResource",
+        "cognito-idp:UntagResource",
+        "cognito-idp:UpdateUserPoolClient"
+      ]'
+  fi
 
   cat > "${path}" <<EOF
 {
@@ -155,14 +235,10 @@ write_deploy_permissions_policy() {
       "Resource": [
         "arn:aws:s3:::${state_bucket}",
         "arn:aws:s3:::${state_bucket}/*",
-        "arn:aws:s3:::${web_bucket_dev}",
-        "arn:aws:s3:::${web_bucket_dev}/*",
-        "arn:aws:s3:::${web_bucket_prod}",
-        "arn:aws:s3:::${web_bucket_prod}/*",
-        "arn:aws:s3:::${artifacts_bucket_dev}",
-        "arn:aws:s3:::${artifacts_bucket_dev}/*",
-        "arn:aws:s3:::${artifacts_bucket_prod}",
-        "arn:aws:s3:::${artifacts_bucket_prod}/*"
+        "arn:aws:s3:::${web_bucket}",
+        "arn:aws:s3:::${web_bucket}/*",
+        "arn:aws:s3:::${artifacts_bucket}",
+        "arn:aws:s3:::${artifacts_bucket}/*"
       ]
     },
     {
@@ -171,8 +247,7 @@ write_deploy_permissions_policy() {
       "Action": "dynamodb:*",
       "Resource": [
         "arn:aws:dynamodb:${aws_region}:${account_id}:table/${lock_table}",
-        "arn:aws:dynamodb:${aws_region}:${account_id}:table/${submission_table_dev}",
-        "arn:aws:dynamodb:${aws_region}:${account_id}:table/${submission_table_prod}"
+        "arn:aws:dynamodb:${aws_region}:${account_id}:table/${submission_table}"
       ]
     },
     {
@@ -189,10 +264,8 @@ write_deploy_permissions_policy() {
       "Effect": "Allow",
       "Action": "lambda:*",
       "Resource": [
-        "arn:aws:lambda:${aws_region}:${account_id}:function:${lambda_dev}",
-        "arn:aws:lambda:${aws_region}:${account_id}:function:${lambda_dev}:*",
-        "arn:aws:lambda:${aws_region}:${account_id}:function:${lambda_prod}",
-        "arn:aws:lambda:${aws_region}:${account_id}:function:${lambda_prod}:*"
+        "arn:aws:lambda:${aws_region}:${account_id}:function:${lambda_name}",
+        "arn:aws:lambda:${aws_region}:${account_id}:function:${lambda_name}:*"
       ]
     },
     {
@@ -210,24 +283,17 @@ write_deploy_permissions_policy() {
         "iam:UntagRole",
         "iam:UpdateAssumeRolePolicy"
       ],
-      "Resource": [
-        "arn:aws:iam::${account_id}:role/${lambda_role_dev}",
-        "arn:aws:iam::${account_id}:role/${lambda_role_prod}"
-      ]
+      "Resource": "arn:aws:iam::${account_id}:role/${lambda_role}"
     },
     {
       "Sid": "ManageProjectLogGroups",
       "Effect": "Allow",
       "Action": "logs:*",
       "Resource": [
-        "arn:aws:logs:${aws_region}:${account_id}:log-group:/aws/lambda/${lambda_dev}",
-        "arn:aws:logs:${aws_region}:${account_id}:log-group:/aws/lambda/${lambda_dev}:*",
-        "arn:aws:logs:${aws_region}:${account_id}:log-group:/aws/lambda/${lambda_prod}",
-        "arn:aws:logs:${aws_region}:${account_id}:log-group:/aws/lambda/${lambda_prod}:*",
-        "arn:aws:logs:${aws_region}:${account_id}:log-group:/aws/apigateway/dev-infrastructure-as-words",
-        "arn:aws:logs:${aws_region}:${account_id}:log-group:/aws/apigateway/dev-infrastructure-as-words:*",
-        "arn:aws:logs:${aws_region}:${account_id}:log-group:/aws/apigateway/prod-infrastructure-as-words",
-        "arn:aws:logs:${aws_region}:${account_id}:log-group:/aws/apigateway/prod-infrastructure-as-words:*"
+        "arn:aws:logs:${aws_region}:${account_id}:log-group:/aws/lambda/${lambda_name}",
+        "arn:aws:logs:${aws_region}:${account_id}:log-group:/aws/lambda/${lambda_name}:*",
+        "arn:aws:logs:${aws_region}:${account_id}:log-group:/aws/apigateway/${environment_name}-infrastructure-as-words",
+        "arn:aws:logs:${aws_region}:${account_id}:log-group:/aws/apigateway/${environment_name}-infrastructure-as-words:*"
       ]
     },
     {
@@ -253,10 +319,8 @@ write_deploy_permissions_policy() {
         "cloudwatch:UntagResource"
       ],
       "Resource": [
-        "${dev_dashboard_arn}",
-        "${prod_dashboard_arn}",
-        "${dev_alarm_arn}",
-        "${prod_alarm_arn}"
+        "${dashboard_arn}",
+        "${alarm_arn}"
       ]
     },
     {
@@ -272,23 +336,7 @@ write_deploy_permissions_policy() {
       "Sid": "NotificationsAndAdminParameter",
       "Effect": "Allow",
       "Action": "sns:*",
-      "Resource": [
-        "${dev_topic_arn}",
-        "${prod_topic_arn}"
-      ]
-    },
-    {
-      "Sid": "SsmAdminParameter",
-      "Effect": "Allow",
-      "Action": [
-        "ssm:AddTagsToResource",
-        "ssm:DeleteParameter",
-        "ssm:GetParameter",
-        "ssm:ListTagsForResource",
-        "ssm:PutParameter",
-        "ssm:RemoveTagsFromResource"
-      ],
-      "Resource": "${admin_parameter_arn}"
+      "Resource": "${topic_arn}"
     },
     {
       "Sid": "DnsHostedZoneControl",
@@ -373,38 +421,10 @@ write_deploy_permissions_policy() {
     {
       "Sid": "CognitoControlPlane",
       "Effect": "Allow",
-      "Action": [
-        "cognito-idp:AdminCreateUser",
-        "cognito-idp:AdminDeleteUser",
-        "cognito-idp:AdminGetUser",
-        "cognito-idp:AdminResetUserPassword",
-        "cognito-idp:AdminSetUserPassword",
-        "cognito-idp:AdminUpdateUserAttributes",
-        "cognito-idp:CreateResourceServer",
-        "cognito-idp:CreateUserPool",
-        "cognito-idp:CreateUserPoolClient",
-        "cognito-idp:CreateUserPoolDomain",
-        "cognito-idp:DeleteResourceServer",
-        "cognito-idp:DeleteUserPool",
-        "cognito-idp:DeleteUserPoolClient",
-        "cognito-idp:DeleteUserPoolDomain",
-        "cognito-idp:DescribeUserPool",
-        "cognito-idp:DescribeUserPoolClient",
-        "cognito-idp:DescribeUserPoolDomain",
-        "cognito-idp:GetResourceServer",
-        "cognito-idp:ListResourceServers",
-        "cognito-idp:ListTagsForResource",
-        "cognito-idp:ListUserPoolClients",
-        "cognito-idp:ListUserPools",
-        "cognito-idp:ListUsers",
-        "cognito-idp:TagResource",
-        "cognito-idp:UntagResource",
-        "cognito-idp:UpdateResourceServer",
-        "cognito-idp:UpdateUserPool",
-        "cognito-idp:UpdateUserPoolClient"
-      ],
+      "Action": ${cognito_actions_json},
       "Resource": "*"
     }
+${ssm_statement}
   ]
 }
 EOF
@@ -465,14 +485,17 @@ main() {
   gh auth status >/dev/null
 
   local repo_slug="${REPO_SLUG:-$(repo_slug_from_git)}"
-  local deploy_role_name="${DEPLOY_ROLE_NAME:-${DEFAULT_DEPLOY_ROLE_NAME}}"
+  local dev_deploy_role_name="${DEPLOY_ROLE_NAME_DEV:-${DEFAULT_DEV_DEPLOY_ROLE_NAME}}"
+  local prod_deploy_role_name="${DEPLOY_ROLE_NAME_PROD:-${DEFAULT_PROD_DEPLOY_ROLE_NAME}}"
   local review_role_name="${REVIEW_ROLE_NAME:-${DEFAULT_REVIEW_ROLE_NAME}}"
   local aws_region="${AWS_REGION:-${DEFAULT_AWS_REGION}}"
-  local hosted_zone_id="${HOSTED_ZONE_ID:-${DEFAULT_HOSTED_ZONE_ID}}"
+  local hosted_zone_name="${HOSTED_ZONE_NAME:-${DEFAULT_HOSTED_ZONE_NAME}}"
+  local hosted_zone_id="${HOSTED_ZONE_ID:-$(lookup_hosted_zone_id "${hosted_zone_name}")}"
   local account_id
   local temp_dir
   local provider_arn
-  local deploy_role_arn
+  local dev_deploy_role_arn
+  local prod_deploy_role_arn
   local review_role_arn
 
   temp_dir="$(mktemp -d)"
@@ -481,26 +504,39 @@ main() {
   account_id="$(aws sts get-caller-identity --query 'Account' --output text)"
   provider_arn="$(ensure_oidc_provider)"
 
-  write_deploy_trust_policy "${temp_dir}/deploy-trust.json" "${provider_arn}" "${repo_slug}"
+  write_deploy_trust_policy "${temp_dir}/deploy-dev-trust.json" "${provider_arn}" "${repo_slug}" "dev"
+  write_deploy_trust_policy "${temp_dir}/deploy-prod-trust.json" "${provider_arn}" "${repo_slug}" "prod"
   write_review_trust_policy "${temp_dir}/review-trust.json" "${provider_arn}" "${repo_slug}"
-  write_deploy_permissions_policy "${temp_dir}/deploy-policy.json" "${account_id}" "${aws_region}" "${hosted_zone_id}"
+  write_deploy_permissions_policy "${temp_dir}/deploy-dev-policy.json" "${account_id}" "${aws_region}" "${hosted_zone_id}" "dev"
+  write_deploy_permissions_policy "${temp_dir}/deploy-prod-policy.json" "${account_id}" "${aws_region}" "${hosted_zone_id}" "prod"
   write_review_permissions_policy "${temp_dir}/review-policy.json"
 
-  upsert_role "${deploy_role_name}" "${temp_dir}/deploy-trust.json"
+  upsert_role "${dev_deploy_role_name}" "${temp_dir}/deploy-dev-trust.json"
+  upsert_role "${prod_deploy_role_name}" "${temp_dir}/deploy-prod-trust.json"
   upsert_role "${review_role_name}" "${temp_dir}/review-trust.json"
 
   put_inline_policy \
-    "${deploy_role_name}" \
-    "InfrastructureAsWordsGitHubDeploy" \
-    "${temp_dir}/deploy-policy.json"
+    "${dev_deploy_role_name}" \
+    "InfrastructureAsWordsGitHubDeployDev" \
+    "${temp_dir}/deploy-dev-policy.json"
+  put_inline_policy \
+    "${prod_deploy_role_name}" \
+    "InfrastructureAsWordsGitHubDeployProd" \
+    "${temp_dir}/deploy-prod-policy.json"
   put_inline_policy \
     "${review_role_name}" \
     "InfrastructureAsWordsGitHubReview" \
     "${temp_dir}/review-policy.json"
 
-  deploy_role_arn="$(
+  dev_deploy_role_arn="$(
     aws iam get-role \
-      --role-name "${deploy_role_name}" \
+      --role-name "${dev_deploy_role_name}" \
+      --query 'Role.Arn' \
+      --output text
+  )"
+  prod_deploy_role_arn="$(
+    aws iam get-role \
+      --role-name "${prod_deploy_role_name}" \
       --query 'Role.Arn' \
       --output text
   )"
@@ -511,11 +547,14 @@ main() {
       --output text
   )"
 
-  gh variable set AWS_DEPLOY_ROLE_ARN --body "${deploy_role_arn}" --repo "${repo_slug}"
+  gh variable set AWS_DEPLOY_ROLE_ARN_DEV --body "${dev_deploy_role_arn}" --repo "${repo_slug}"
+  gh variable set AWS_DEPLOY_ROLE_ARN_PROD --body "${prod_deploy_role_arn}" --repo "${repo_slug}"
+  gh variable set AWS_DEPLOY_ROLE_ARN --body "${prod_deploy_role_arn}" --repo "${repo_slug}"
   gh variable set AWS_REVIEW_ROLE_ARN --body "${review_role_arn}" --repo "${repo_slug}"
 
   echo "Configured GitHub Actions OIDC for ${repo_slug}."
-  echo "AWS_DEPLOY_ROLE_ARN=${deploy_role_arn}"
+  echo "AWS_DEPLOY_ROLE_ARN_DEV=${dev_deploy_role_arn}"
+  echo "AWS_DEPLOY_ROLE_ARN_PROD=${prod_deploy_role_arn}"
   echo "AWS_REVIEW_ROLE_ARN=${review_role_arn}"
 }
 

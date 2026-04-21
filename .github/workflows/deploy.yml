@@ -131,21 +131,37 @@ jobs:
           terraform_wrapper: false
 
       - name: Validate deploy role configuration
+        id: deploy_role
         shell: bash
         env:
+          DEPLOY_TARGET: ${{ needs.build.outputs.deploy_target }}
           AWS_DEPLOY_ROLE_ARN: ${{ vars.AWS_DEPLOY_ROLE_ARN }}
+          AWS_DEPLOY_ROLE_ARN_DEV: ${{ vars.AWS_DEPLOY_ROLE_ARN_DEV }}
+          AWS_DEPLOY_ROLE_ARN_PROD: ${{ vars.AWS_DEPLOY_ROLE_ARN_PROD }}
         run: |
-          if [[ -z "${AWS_DEPLOY_ROLE_ARN}" ]]; then
-            echo "Set the AWS_DEPLOY_ROLE_ARN repository or organization variable before running deploy." >&2
+          role_arn=""
+          case "${DEPLOY_TARGET}" in
+            dev)
+              role_arn="${AWS_DEPLOY_ROLE_ARN_DEV:-${AWS_DEPLOY_ROLE_ARN}}"
+              ;;
+            auth|prod|all)
+              role_arn="${AWS_DEPLOY_ROLE_ARN_PROD:-${AWS_DEPLOY_ROLE_ARN}}"
+              ;;
+          esac
+
+          if [[ -z "${role_arn}" ]]; then
+            echo "Set AWS_DEPLOY_ROLE_ARN_DEV and AWS_DEPLOY_ROLE_ARN_PROD repository variables before running deploy." >&2
             exit 1
           fi
+
+          echo "role_arn=${role_arn}" >> "${GITHUB_OUTPUT}"
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-region: ${{ env.AWS_REGION }}
           role-session-name: gha-infrastructure-as-words-${{ github.run_id }}
-          role-to-assume: ${{ vars.AWS_DEPLOY_ROLE_ARN }}
+          role-to-assume: ${{ steps.deploy_role.outputs.role_arn }}
 
       - name: Install dependencies
         run: npm ci

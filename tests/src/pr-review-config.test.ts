@@ -30,7 +30,7 @@ void test("PR review config defines a model, marker, and unique requirements", (
   assert.match(config.modelId, /claude-opus/i);
   assert.equal(config.commentMarker.includes("iaw-pr-ai-review"), true);
   assert.equal(config.maxDiffCharacters > 0, true);
-  assert.deepEqual(config.failOnSeverities, ["critical", "high"]);
+  assert.deepEqual(config.failOnSeverities, ["critical"]);
   assert.equal(config.requirements.length >= 5, true);
 
   const ids = config.requirements.map((requirement) => requirement.id);
