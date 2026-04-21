@@ -78,6 +78,9 @@ npm run deploy:all
 
 ## GitHub Deploy Setup
 
+- Run `./scripts/configure-github-actions-oidc.sh` once from a workstation that
+  has AWS and GitHub CLI access. It creates or updates the GitHub OIDC provider,
+  the deploy/review IAM roles, and the repository variables the workflows use.
 - Configure GitHub Actions to use AWS OIDC and set the repository or
   organization variable `AWS_DEPLOY_ROLE_ARN`.
 - For AI PR review, you can optionally set `AWS_REVIEW_ROLE_ARN`; otherwise the
