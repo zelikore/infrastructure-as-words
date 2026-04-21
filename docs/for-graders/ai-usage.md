@@ -27,6 +27,9 @@ partner rather than as a passive autocomplete tool.
 - The AI was kept inside a strict feedback loop: schema validation, Node tests,
   Terraform validation/tests, and live AWS verification were used to confirm
   output before changes were treated as complete.
+- The local git `pre-commit` hook runs lint/type checks plus Terraform
+  validation and module tests before a commit is accepted, so obviously bad code
+  is blocked before it reaches a branch or PR.
 - Sensitive configuration was not left in prompts or source. Runtime admin
   configuration moved into SSM Parameter Store and is retrieved at runtime by
   Lambda.
@@ -36,6 +39,8 @@ partner rather than as a passive autocomplete tool.
 - Root agent workflow: [`AGENTS.md`](../../AGENTS.md)
 - Pull request workflow template:
   [`.github/pull_request_template.md`](../../.github/pull_request_template.md)
+- Local pre-commit hook:
+  [`.githooks/pre-commit`](../../.githooks/pre-commit)
 - AI PR review workflow:
   [`.github/workflows/pr-review.yml`](../../.github/workflows/pr-review.yml)
 - AI PR review requirements:

@@ -20,6 +20,14 @@ branch.
   job, so a PR from any other branch cannot merge.
 - The Bedrock-powered PR review job only runs for pull requests into `main`.
 
+## Local commit gate
+
+- The repo also installs a local `pre-commit` hook from `.githooks/pre-commit`.
+- That hook runs typed linting plus Terraform validation and module tests before
+  a commit is accepted.
+- The goal is to stop obviously bad code locally before it ever reaches
+  `development`, a pull request, or a deploy workflow.
+
 ## Why this exists for the submission
 
 The challenge asks for AI-native workflow evidence and operational discipline.

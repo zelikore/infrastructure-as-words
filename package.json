@@ -37,6 +37,8 @@
     "test:critical": "node ./scripts/support/run-critical-test-gate.mjs",
     "review:pr:ai": "tsx scripts/support/review-pull-request.ts --config tools/pr-review-requirements.json",
     "validate:infra": "npm run validate --workspace @infrastructure-as-words/infra",
+    "precommit:checks": "npm run lint:type && npm run validate:infra",
+    "hooks:install": "node ./scripts/setup-git-hooks.mjs",
     "check": "npm run lint:type && npm run typecheck && npm test && npm run validate:infra",
     "format": "prettier \"**/*.{ts,tsx,js,mjs,cjs,json,md,tf}\" --write",
     "format:check": "prettier \"**/*.{ts,tsx,js,mjs,cjs,json,md,tf}\" --check",
@@ -45,7 +47,8 @@
     "deploy": "./scripts/deploy-all.sh",
     "deploy:all": "./scripts/deploy-all.sh",
     "deploy:env": "./scripts/deploy.sh",
-    "migrate:auth-state": "./scripts/migrate-auth-state.sh"
+    "migrate:auth-state": "./scripts/migrate-auth-state.sh",
+    "prepare": "npm run hooks:install"
   },
   "devDependencies": {
     "@aws-sdk/client-bedrock-runtime": "^3.1033.0",
