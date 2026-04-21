@@ -78,17 +78,16 @@ jobs:
       - name: Build deployable artifacts
         run: npm run build:all
 
+      - name: Package deployable artifacts
+        run: tar -czf deploy-assets.tgz infra/config/dist packages/contracts/dist services/api/dist web/out
+
       - name: Upload deployable artifacts
         uses: actions/upload-artifact@v4
         with:
           name: deploy-assets
           if-no-files-found: error
           retention-days: 7
-          path: |
-            infra/config/dist
-            packages/contracts/dist
-            services/api/dist
-            web/out
+          path: deploy-assets.tgz
 
   deploy:
     name: Deploy stacks
@@ -156,6 +155,9 @@ jobs:
         with:
           name: deploy-assets
           path: .
+
+      - name: Restore deployable artifacts
+        run: tar -xzf deploy-assets.tgz
 
       - name: Deploy shared auth stack
         if: needs.build.outputs.deploy_target == 'all' || needs.build.outputs.deploy_target == 'auth' || needs.build.outputs.deploy_target == 'prod'
