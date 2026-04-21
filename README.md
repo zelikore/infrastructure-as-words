@@ -1,27 +1,125 @@
 # Infrastructure as Words
 
-Infrastructure as Words is a static Next.js front end paired with an AWS Lambda
-API. Users authenticate through a Cognito Hosted UI custom domain, describe
-infrastructure in plain language, and revisit their timestamped submission
-history later.
+Infrastructure as Words is a Bedrock-backed infrastructure design workspace.
+Authenticated users describe the platform they want, the system generates a
+governed Terraform-oriented response, stores the run history, saves a zip
+artifact, and renders an infrastructure diagram in the browser.
+
+This repository was built by Elijah Faviel for the CVS team take-home coding
+challenge.
+
+## Start Here
+
+If you are grading the submission, this is the fastest path through the repo:
+
+1. Read `docs/for-graders/ai-usage.md` for the AI workflow evidence and the
+   product-level AI architecture.
+2. Read `docs/for-graders/release-flow.md` for the branch model, PR policy, and
+   deployment promotion flow.
+3. Open `diagrams/infrastructure-as-words-platform.svg` for the system diagram.
+   The editable source lives at `diagrams/infrastructure-as-words-platform.drawio.xml`.
+4. Open `web/components/app-shell.tsx` to see the signed-out gate, signed-in
+   workspace shell, and top-level UX flow.
+5. Open `services/api/src/lambda.ts` and
+   `services/api/src/generation-service.ts` to see the API entrypoint,
+   generation orchestration, persistence, and response shaping.
+6. Open `infra/modules/README.md`, `infra/modules/module-catalog.json`, and the
+   module directories under `infra/modules/` to see the reusable Terraform
+   surface.
+7. Open `.github/workflows/` to inspect CI, deployment, and Bedrock PR review.
+
+## What the product does
+
+- Cognito-hosted sign-in gates all generation functionality behind auth.
+- A signed-in user submits an infrastructure request.
+- The API runs a governed generation flow against Amazon Bedrock.
+- The run is stored in DynamoDB with timestamps, status, summary, cost, and
+  diagram JSON.
+- A downloadable zip artifact is written to S3.
+- The UI shows current and historical runs with filters, ordering, cost, and
+  diagram detail.
+- Admin settings control governance metadata, module preferences, and budget
+  guardrails.
+
+## Repository Guide
+
+### Product code
+
+- `web/`
+  Next.js static SPA, exported for S3/CloudFront hosting. Key files:
+  - `web/components/app-shell.tsx`: top-level signed-in and signed-out shell
+  - `web/components/workspace-overview.tsx`: request entry point
+  - `web/components/workspace-history-view.tsx`: sortable/filterable run list
+  - `web/components/submission-detail-panel.tsx`: diagram and artifact detail
+  - `web/components/governance-page.tsx`: admin governance and observability UI
+  - `web/app/globals.css`: shared design system and layout language
+
+- `services/api/`
+  Typed Lambda API. Key files:
+  - `services/api/src/lambda.ts`: API Gateway/Lambda handler
+  - `services/api/src/generation-service.ts`: request lifecycle orchestration
+  - `services/api/src/bedrock-generator.ts`: Bedrock invocation and output
+    normalization
+  - `services/api/src/repository.ts`: DynamoDB persistence
+  - `services/api/src/admin-auth.ts`: admin SSM lookup and authorization
+  - `services/api/src/observability.ts`: structured JSON logging helpers
+
+- `packages/contracts/`
+  Shared schemas and API contracts used by both the web app and the Lambda API.
+
+### Infrastructure code
+
+- `infra/modules/`
+  Reusable Terraform modules. The catalog and metadata are committed so the same
+  module descriptions can be reused in governance and AI prompting.
+  - `infra/modules/app-environment/`: composed environment module
+  - `infra/modules/shared-auth/`: shared Cognito custom-domain stack
+  - `infra/modules/http-api-service/`: Lambda + API Gateway
+  - `infra/modules/submission-data/`: DynamoDB + S3 run storage
+  - `infra/modules/static-website/`: S3 + CloudFront front-end hosting
+  - `infra/modules/observability-suite/`: dashboard, alarms, SNS
+  - `infra/modules/*.tftest.hcl`: Terraform module tests
+
+- `infra/terraform/`
+  Environment root for the application platform. It consumes the reusable
+  modules for both `dev` and `prod`.
+
+- `infra/terraform-auth/`
+  Separate shared-auth root so the Cognito custom domain can be deployed and
+  managed independently from any one environment.
+
+- `infra/config/`
+  Typed source of truth for environment names, domains, and deployment inputs.
+
+### Delivery, testing, and AI workflow
+
+- `.github/workflows/ci.yml`
+  Runs workflow linting, repository checks, artifact builds, and the branch
+  guard that only allows `development` to promote into `main`.
+
+- `.github/workflows/deploy.yml`
+  Pushes to `development` deploy the `dev` environment. Pushes to `main` deploy
+  shared auth and the `prod` environment.
+
+- `.github/workflows/pr-review.yml`
+  Runs the Bedrock-powered PR review lane, but only for pull requests into
+  `main`.
+
+- `tools/pr-review-requirements.json`
+  Repo-owned PR review criteria consumed by the AI review workflow.
+
+- `tests/`
+  Node-level tests for normalization, observability, and other critical logic.
+
+- `scripts/`
+  Deployment, GitHub OIDC bootstrap, and test support scripts.
+
+- `AGENTS.md` plus the scoped `*/AGENTS.md` files
+  Repo instructions for AI-assisted development in this codebase.
 
 ## Architecture Diagram
 
 ![Infrastructure as Words architecture](./diagrams/infrastructure-as-words-platform.svg)
-
-The editable source is committed at
-`diagrams/infrastructure-as-words-platform.drawio.xml`.
-
-## Repo layout
-
-- `web/` contains the exported Next.js application.
-- `services/api/` contains the typed Lambda handler and DynamoDB repository.
-- `packages/contracts/` contains shared schemas and response types.
-- `infra/terraform/` and `infra/terraform-auth/` are environment roots that
-  compose reusable modules.
-- `infra/modules/` contains reusable Terraform modules, metadata, and module
-  tests (`*.tftest.hcl`).
-- `infra/config/` contains the typed environment source of truth.
 
 ## Commands
 
@@ -38,66 +136,54 @@ npm run build:all
 npm run validate:infra
 npm run deploy:auth
 DEPLOY_ENV=dev npm run deploy:env
+DEPLOY_ENV=prod npm run deploy:env
 npm run deploy:all
 ```
 
 For the first shared-auth deployment, set `IAW_ADMIN_EMAIL` explicitly. After
-the shared auth stack exists, `scripts/deploy-auth.sh` will reuse the live
-value from the `"/infrastructure-as-words/admin-email"` SSM parameter so the
-repo does not need a real admin email committed in source.
+the shared auth stack exists, `scripts/deploy-auth.sh` reuses the live value
+from the `"/infrastructure-as-words/admin-email"` SSM parameter so a real admin
+email does not need to live in source control.
 
-## Submission docs
+## Submission Docs
 
-- `AGENTS.md` documents the repo-level AI agent workflow and scoped handbooks.
-- `docs/for-graders/ai-usage.md` explains how AI was used in development and in
-  the product itself.
-- `docs/for-graders/release-flow.md` explains the `dev`/`prod` branch model and
-  the PR review system used for this submission.
+- `docs/for-graders/ai-usage.md`
+  How AI was used in development and how Bedrock is used in the product.
+- `docs/for-graders/release-flow.md`
+  The long-running `development` environment model and the protected
+  `development -> main` promotion flow.
+- `diagrams/infrastructure-as-words-platform.svg`
+  Architecture diagram for reviewers.
 
 ## Environments
 
-- `dev` deploys `dev.infrastructure-as-words.com`,
-  `api.dev.infrastructure-as-words.com`, and uses the shared auth domain
-  `auth.infrastructure-as-words.com`
-- `prod` deploys `infrastructure-as-words.com`,
-  `api.infrastructure-as-words.com`, and uses the shared auth domain
-  `auth.infrastructure-as-words.com`
+- `dev`
+  - App: `https://dev.infrastructure-as-words.com`
+  - API: `https://api.dev.infrastructure-as-words.com`
+  - Auth: `https://auth.infrastructure-as-words.com`
 
-## GitHub Actions
+- `prod`
+  - App: `https://infrastructure-as-words.com`
+  - API: `https://api.infrastructure-as-words.com`
+  - Auth: `https://auth.infrastructure-as-words.com`
 
-- `.github/workflows/ci.yml` runs workflow linting, `npm run check`, and
-  `npm run build:all` for pull requests and pushes to `dev` and `prod`.
-- `.github/workflows/pr-review.yml` runs on pull requests, uses Bedrock to
-  review the diff against repo-owned requirements from
-  `tools/pr-review-requirements.json`, then updates a PR comment with findings.
-- `.github/workflows/deploy.yml` is branch-aware:
-  - pushes to `dev` build once and deploy the `dev` environment
-  - pushes to `prod` build once, deploy shared auth, then deploy `prod`
-- Manual deploys support `all`, `auth`, `prod`, and `dev` targets.
+## Branch and Deployment Model
 
-## Branch Flow
+- `development` is the long-running integration branch.
+- Any push to `development` runs CI and deploys the `dev` environment.
+- `main` is the protected production branch.
+- Pull requests into `main` must come from `development`.
+- The Bedrock PR review workflow only runs on pull requests into `main`.
+- Any push to `main` runs CI, deploys shared auth, and deploys `prod`.
 
-- `dev` is the integration branch and deploys the `dev` environment on push.
-- `prod` is the production branch and deploys shared auth plus the `prod`
-  environment on push.
-- Pull requests run both the standard CI checks and the Bedrock-powered review
-  lane.
+## GitHub Actions and AWS Setup
 
-## GitHub Deploy Setup
-
-- Run `./scripts/configure-github-actions-oidc.sh` once from a workstation that
-  has AWS and GitHub CLI access. It creates or updates the GitHub OIDC provider,
-  the branch-specific deploy/review IAM roles, and the repository variables the
-  workflows use.
-- Configure GitHub Actions to use AWS OIDC and set the repository or
-  organization variables `AWS_DEPLOY_ROLE_ARN_DEV`,
-  `AWS_DEPLOY_ROLE_ARN_PROD`, and `AWS_REVIEW_ROLE_ARN`.
-- The deploy role must trust
-  `arn:aws:iam::<account-id>:oidc-provider/token.actions.githubusercontent.com`
-  and allow `sts:AssumeRoleWithWebIdentity` for the exact branch and workflow
-  file that will use it.
-- The deploy role needs Terraform apply access to the services managed by this
+- Run `./scripts/configure-github-actions-oidc.sh` from a workstation with AWS
+  CLI and GitHub CLI access. It creates or updates the GitHub OIDC provider,
+  the branch-bound IAM roles, and the repository variables used by Actions.
+- `AWS_DEPLOY_ROLE_ARN_DEV` trusts the `development` branch deploy workflow.
+- `AWS_DEPLOY_ROLE_ARN_PROD` trusts the `main` branch deploy workflow.
+- `AWS_REVIEW_ROLE_ARN` trusts the PR review workflow.
+- The deploy roles need Terraform apply access to the services managed by this
   repo: ACM, API Gateway, CloudFront, Cognito, DynamoDB, IAM, Lambda, Route53,
-  S3, and STS.
-- The review role needs `bedrock:InvokeModel` access to the configured review
-  model plus permission to assume the role through GitHub OIDC.
+  S3, SNS, SSM, CloudWatch, and STS.

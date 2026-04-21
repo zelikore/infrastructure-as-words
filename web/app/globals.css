@@ -264,6 +264,55 @@ textarea {
   position: relative;
 }
 
+.iaw-challengeBanner {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  align-items: center;
+  padding: 12px 16px;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  border-radius: calc(var(--radius) + 2px);
+  background:
+    linear-gradient(135deg, rgba(15, 23, 42, 0.9), rgba(22, 72, 112, 0.88)),
+    rgba(15, 23, 42, 0.92);
+  box-shadow: 0 18px 40px rgba(15, 23, 42, 0.16);
+}
+
+.iaw-challengeBannerText {
+  margin: 0;
+  color: rgba(248, 250, 252, 0.94);
+  font-family: var(--font-meta), monospace;
+  font-size: 0.78rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.iaw-challengeBannerLink {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 38px;
+  padding: 0 14px;
+  border: 1px solid rgba(248, 250, 252, 0.18);
+  border-radius: 999px;
+  color: #f8fbff;
+  background: rgba(248, 250, 252, 0.08);
+  font-family: var(--font-body), sans-serif;
+  font-size: 0.86rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition:
+    transform 160ms ease,
+    background-color 160ms ease,
+    border-color 160ms ease;
+}
+
+.iaw-challengeBannerLink:hover {
+  transform: translateY(-1px);
+  background: rgba(248, 250, 252, 0.14);
+  border-color: rgba(248, 250, 252, 0.28);
+}
+
 .iaw-header,
 .iaw-archive,
 .iaw-surface {
@@ -2367,6 +2416,11 @@ textarea {
 @media (max-width: 820px) {
   .iaw-page {
     padding: 20px 14px 56px;
+  }
+
+  .iaw-challengeBanner {
+    flex-direction: column;
+    align-items: flex-start;
   }
 
   .iaw-header,

@@ -531,8 +531,8 @@ main() {
   account_id="$(aws sts get-caller-identity --query 'Account' --output text)"
   provider_arn="$(ensure_oidc_provider)"
 
-  write_deploy_trust_policy "${temp_dir}/deploy-dev-trust.json" "${provider_arn}" "${repo_slug}" "dev"
-  write_deploy_trust_policy "${temp_dir}/deploy-prod-trust.json" "${provider_arn}" "${repo_slug}" "prod"
+  write_deploy_trust_policy "${temp_dir}/deploy-dev-trust.json" "${provider_arn}" "${repo_slug}" "development"
+  write_deploy_trust_policy "${temp_dir}/deploy-prod-trust.json" "${provider_arn}" "${repo_slug}" "main"
   write_review_trust_policy "${temp_dir}/review-trust.json" "${provider_arn}" "${repo_slug}"
   write_deploy_permissions_policy "${temp_dir}/deploy-dev-policy.json" "${account_id}" "${aws_region}" "${hosted_zone_id}" "dev"
   write_deploy_permissions_policy "${temp_dir}/deploy-prod-policy.json" "${account_id}" "${aws_region}" "${hosted_zone_id}" "prod"

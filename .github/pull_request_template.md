@@ -2,6 +2,11 @@
 
 -
 
+## Branch Intent
+
+- Base branch:
+- If targeting `main`, confirm this PR originates from `development`:
+
 ## AI-Assisted Workflow
 
 - AI helped with:

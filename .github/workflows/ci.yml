@@ -2,10 +2,13 @@ name: CI
 
 on:
   pull_request:
+    branches:
+      - development
+      - main
   push:
     branches:
-      - dev
-      - prod
+      - development
+      - main
 
 concurrency:
   group: ci-${{ github.workflow }}-${{ github.ref }}
@@ -16,6 +19,21 @@ env:
   TERRAFORM_VERSION: "1.8.5"
 
 jobs:
+  main_pr_source_guard:
+    if: github.event_name == 'pull_request' && github.base_ref == 'main'
+    name: Require development source branch
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Validate pull request source branch
+        shell: bash
+        run: |
+          if [[ "${GITHUB_HEAD_REF}" != "development" ]]; then
+            echo "Pull requests into main must originate from the development branch." >&2
+            exit 1
+          fi
+
   actionlint:
     name: Workflow lint
     runs-on: ubuntu-latest
