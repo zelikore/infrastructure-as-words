@@ -1,0 +1,10 @@
+{
+  "moduleId": "iaw-example-static-website",
+  "label": "Example Static Website Stack",
+  "category": "delivery",
+  "usedInDeployment": false,
+  "requiredByDefault": false,
+  "capabilities": ["example", "static-site", "cloudfront"],
+  "description": "Composable example stack for static websites and docs pages.",
+  "documentationPath": "README.md"
+}

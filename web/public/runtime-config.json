@@ -1,0 +1,17 @@
+{
+  "environmentName": "dev",
+  "appOrigin": "https://dev.infrastructure-as-words.com",
+  "apiBaseUrl": "https://api.dev.infrastructure-as-words.com",
+  "authDomain": "auth.infrastructure-as-words.com",
+  "authIssuer": "https://cognito-idp.us-west-2.amazonaws.com/local-dev-placeholder",
+  "userPoolClientId": "local-dev-placeholder",
+  "oauthScopes": [
+    "openid",
+    "email",
+    "profile",
+    "infrastructure-as-words/read",
+    "infrastructure-as-words/write"
+  ],
+  "redirectUri": "https://dev.infrastructure-as-words.com/auth/callback",
+  "logoutUri": "https://dev.infrastructure-as-words.com"
+}

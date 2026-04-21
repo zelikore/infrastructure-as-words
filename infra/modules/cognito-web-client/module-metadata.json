@@ -1,0 +1,10 @@
+{
+  "moduleId": "iaw-cognito-web-client",
+  "label": "Cognito Web Client",
+  "category": "identity",
+  "usedInDeployment": true,
+  "requiredByDefault": false,
+  "capabilities": ["oauth-client", "pkce", "hosted-ui"],
+  "description": "Environment-specific OAuth app client for browser applications.",
+  "documentationPath": "README.md"
+}

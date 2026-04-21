@@ -1,0 +1,72 @@
+name: PR AI Review
+
+on:
+  pull_request:
+    types:
+      - opened
+      - synchronize
+      - reopened
+      - ready_for_review
+
+concurrency:
+  group: pr-ai-review-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+env:
+  AWS_REGION: us-west-2
+  NODE_VERSION: "22"
+
+jobs:
+  review:
+    if: github.event.pull_request.draft == false
+    name: Bedrock PR Review
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+      issues: write
+      pull-requests: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Resolve review role
+        id: review_role
+        shell: bash
+        env:
+          AWS_DEPLOY_ROLE_ARN: ${{ vars.AWS_DEPLOY_ROLE_ARN }}
+          AWS_REVIEW_ROLE_ARN: ${{ vars.AWS_REVIEW_ROLE_ARN }}
+        run: |
+          role_arn="${AWS_REVIEW_ROLE_ARN:-${AWS_DEPLOY_ROLE_ARN}}"
+          if [[ -z "${role_arn}" ]]; then
+            echo "Set AWS_REVIEW_ROLE_ARN or AWS_DEPLOY_ROLE_ARN for PR review." >&2
+            exit 1
+          fi
+
+          echo "role_arn=${role_arn}" >> "${GITHUB_OUTPUT}"
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: ${{ env.AWS_REGION }}
+          role-session-name: gha-infrastructure-as-words-pr-review-${{ github.run_id }}
+          role-to-assume: ${{ steps.review_role.outputs.role_arn }}
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Review pull request diff with Bedrock
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: npm run review:pr:ai

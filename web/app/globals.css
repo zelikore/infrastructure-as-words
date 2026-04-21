@@ -1,0 +1,2480 @@
+:root {
+  color-scheme: light;
+  --bg: #ecf1f6;
+  --bg-soft: rgba(255, 255, 255, 0.78);
+  --surface: rgba(255, 255, 255, 0.9);
+  --surface-strong: rgba(255, 255, 255, 0.98);
+  --line: rgba(15, 23, 42, 0.08);
+  --line-strong: rgba(15, 23, 42, 0.16);
+  --text: #0f172a;
+  --text-soft: rgba(15, 23, 42, 0.68);
+  --muted: #64748b;
+  --accent: #1f4e79;
+  --accent-strong: #143754;
+  --accent-soft: rgba(31, 78, 121, 0.08);
+  --warm: #5a6b7f;
+  --warm-soft: rgba(90, 107, 127, 0.08);
+  --danger: #9f2f2f;
+  --shadow: 0 16px 36px rgba(15, 23, 42, 0.08);
+  --radius: 20px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  background:
+    linear-gradient(rgba(15, 23, 42, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(15, 23, 42, 0.035) 1px, transparent 1px),
+    linear-gradient(180deg, #f5f8fb 0%, #e8eef5 100%);
+  background-size:
+    32px 32px,
+    32px 32px,
+    auto;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  color: var(--text);
+  font-family: var(--font-body), sans-serif;
+  background: transparent;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button,
+input,
+select,
+textarea {
+  color: inherit;
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+textarea {
+  resize: vertical;
+}
+
+:focus-visible {
+  outline: 2px solid rgba(36, 93, 139, 0.36);
+  outline-offset: 3px;
+}
+
+.iaw-page {
+  min-height: 100vh;
+  position: relative;
+  overflow: clip;
+  padding: 28px 18px 72px;
+}
+
+.iaw-page::before,
+.iaw-page::after {
+  content: "";
+  position: fixed;
+  inset: auto;
+  pointer-events: none;
+  z-index: 0;
+  border-radius: 999px;
+  filter: blur(56px);
+}
+
+.iaw-pageLanding::before {
+  top: 100px;
+  left: -60px;
+  width: 320px;
+  height: 320px;
+  background: rgba(36, 93, 139, 0.16);
+}
+
+.iaw-pageLanding::after {
+  right: -40px;
+  bottom: 80px;
+  width: 380px;
+  height: 380px;
+  background: rgba(176, 108, 70, 0.12);
+}
+
+.iaw-pageWorkspace::before {
+  top: 120px;
+  right: 14%;
+  width: 180px;
+  height: 180px;
+  background: rgba(31, 78, 121, 0.08);
+}
+
+.iaw-pageWorkspace::after {
+  left: 8%;
+  bottom: 60px;
+  width: 220px;
+  height: 220px;
+  background: rgba(90, 107, 127, 0.06);
+}
+
+.iaw-chrome {
+  width: min(1340px, 100%);
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+  display: grid;
+  gap: 28px;
+}
+
+.iaw-chromeLanding {
+  gap: 34px;
+}
+
+.iaw-appShell {
+  display: grid;
+  grid-template-columns: 220px minmax(0, 1fr);
+  gap: 24px;
+  align-items: start;
+}
+
+.iaw-appContent,
+.iaw-workspaceView {
+  display: grid;
+  gap: 20px;
+}
+
+.iaw-workspaceRail {
+  position: sticky;
+  top: 28px;
+  display: grid;
+  gap: 18px;
+  padding: 18px 16px;
+  border: 1px solid var(--line);
+  border-radius: calc(var(--radius) + 2px);
+  background: rgba(255, 255, 255, 0.86);
+  box-shadow: 0 12px 28px rgba(15, 23, 42, 0.05);
+}
+
+.iaw-workspaceRailHeader {
+  display: grid;
+  gap: 10px;
+}
+
+.iaw-workspaceRailTitle {
+  margin: 8px 0 0;
+  font-size: 1.2rem;
+  font-weight: 600;
+  letter-spacing: -0.04em;
+}
+
+.iaw-workspaceRailSummary {
+  margin: 0;
+  color: var(--text-soft);
+}
+
+.iaw-workspaceRailStats {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.iaw-workspaceRailStat {
+  display: grid;
+  gap: 6px;
+  min-height: 84px;
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: rgba(248, 250, 252, 0.9);
+}
+
+.iaw-workspaceRailStat strong,
+.iaw-workspaceRailRunStatus {
+  font-size: 1rem;
+  letter-spacing: -0.03em;
+}
+
+.iaw-workspaceRailGroup {
+  display: grid;
+  gap: 10px;
+}
+
+.iaw-workspaceNavList {
+  display: grid;
+  gap: 8px;
+}
+
+.iaw-workspaceNavButton {
+  min-height: 42px;
+  padding: 0 12px;
+  border: 1px solid transparent;
+  border-radius: 12px;
+  background: transparent;
+  color: var(--text-soft);
+  text-align: left;
+}
+
+.iaw-workspaceNavButtonActive {
+  border-color: rgba(31, 78, 121, 0.18);
+  background: rgba(31, 78, 121, 0.08);
+  color: var(--text);
+}
+
+.iaw-workspaceNavButton:not(:disabled):hover {
+  border-color: rgba(31, 78, 121, 0.14);
+  background: rgba(31, 78, 121, 0.05);
+}
+
+.iaw-workspaceNavButton:disabled {
+  opacity: 0.46;
+  cursor: not-allowed;
+}
+
+.iaw-workspaceRailRunCard {
+  display: grid;
+  gap: 10px;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background:
+    radial-gradient(
+      circle at top right,
+      rgba(31, 78, 121, 0.1),
+      transparent 28%
+    ),
+    rgba(248, 250, 252, 0.94);
+  text-align: left;
+}
+
+.iaw-workspaceRailRunSummary {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  color: var(--text-soft);
+  line-height: 1.5;
+}
+
+.iaw-header,
+.iaw-mainGrid,
+.iaw-archive,
+.iaw-composer,
+.iaw-detail {
+  position: relative;
+}
+
+.iaw-header,
+.iaw-archive,
+.iaw-surface {
+  backdrop-filter: blur(22px);
+}
+
+.iaw-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+  align-items: center;
+  padding: 14px 18px;
+  border: 1px solid var(--line);
+  border-radius: calc(var(--radius) + 2px);
+  background: rgba(255, 255, 255, 0.72);
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.04);
+}
+
+.iaw-brand,
+.iaw-headerActions,
+.iaw-detailActions,
+.iaw-detailMeta,
+.iaw-composerFooter,
+.iaw-governanceHeader,
+.iaw-governanceModulesHeader,
+.iaw-governanceFooter,
+.iaw-governanceModuleMeta {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+}
+
+.iaw-brandMark {
+  width: 11px;
+  height: 11px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, var(--accent), #8b9aad);
+  box-shadow:
+    0 0 0 8px rgba(255, 255, 255, 0.94),
+    0 0 18px rgba(31, 78, 121, 0.12);
+}
+
+.iaw-brandTitle,
+.iaw-brandSubtitle,
+.iaw-kicker,
+.iaw-sectionLabel,
+.iaw-session,
+.iaw-helper,
+.iaw-archiveStatus,
+.iaw-fieldLabel,
+.iaw-historyMeta,
+.callbackEyebrow {
+  margin: 0;
+  font-family: var(--font-meta), monospace;
+  font-size: 0.75rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.iaw-brandSubtitle,
+.iaw-session,
+.iaw-helper,
+.iaw-archiveStatus,
+.iaw-detailHint,
+.iaw-historyText,
+.iaw-explanationBody,
+.iaw-moduleReason,
+.iaw-moduleSource,
+.callbackBody {
+  color: var(--text-soft);
+}
+
+.iaw-headerActions {
+  justify-content: flex-end;
+  flex-wrap: wrap;
+}
+
+.iaw-primaryButton,
+.iaw-secondaryButton,
+.iaw-starter,
+.iaw-historyCard {
+  border: 1px solid transparent;
+  transition:
+    transform 160ms ease,
+    border-color 160ms ease,
+    background-color 160ms ease;
+}
+
+.iaw-primaryButton,
+.iaw-secondaryButton {
+  min-height: 42px;
+  padding: 0 16px;
+  border-radius: 999px;
+}
+
+.iaw-primaryButton {
+  background: linear-gradient(135deg, var(--accent-strong), #0f2740);
+  color: #f8fbff;
+  box-shadow: 0 12px 28px rgba(15, 23, 42, 0.14);
+}
+
+.iaw-secondaryButton {
+  background: rgba(255, 255, 255, 0.76);
+  border-color: var(--line-strong);
+}
+
+.iaw-landingHero,
+.iaw-workspaceHero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(320px, 0.86fr);
+  gap: 28px;
+  align-items: start;
+}
+
+.iaw-title,
+.callbackTitle,
+.iaw-detailTitle,
+.iaw-composerTitle,
+.iaw-governanceTitle {
+  margin: 0;
+  font-family: var(--font-display), serif;
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: -0.045em;
+  line-height: 0.92;
+}
+
+.iaw-detailTitle,
+.iaw-composerTitle,
+.iaw-governanceTitle {
+  margin-top: 8px;
+  font-size: clamp(2rem, 4vw, 3rem);
+}
+
+.iaw-detailTitle,
+.iaw-composerTitle,
+.iaw-governanceTitle,
+.iaw-archiveTitle {
+  font-family: var(--font-body), sans-serif;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 1.02;
+  letter-spacing: -0.04em;
+}
+
+.iaw-detailTitle,
+.iaw-composerTitle,
+.iaw-governanceTitle {
+  font-size: clamp(1.4rem, 2.1vw, 1.95rem);
+}
+
+.iaw-title {
+  margin-top: 10px;
+  font-size: clamp(3.8rem, 9vw, 6.7rem);
+  max-width: 9ch;
+}
+
+.iaw-titleCompact {
+  font-size: clamp(2.9rem, 5vw, 4.8rem);
+  max-width: 12ch;
+}
+
+.iaw-workspaceHeroConsole {
+  grid-template-columns: minmax(0, 1.02fr) minmax(320px, 0.98fr);
+  align-items: stretch;
+}
+
+.iaw-consoleSummary {
+  display: grid;
+  gap: 14px;
+}
+
+.iaw-consoleSummaryHeader {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  align-items: flex-start;
+}
+
+.iaw-consoleTitle {
+  margin: 8px 0 0;
+  font-size: clamp(1.55rem, 2.6vw, 2rem);
+  font-weight: 600;
+  letter-spacing: -0.05em;
+  line-height: 1;
+}
+
+.iaw-consoleMetaGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(116px, 1fr));
+  gap: 8px;
+}
+
+.iaw-consoleMetaCard,
+.iaw-detailStat,
+.iaw-detailMetric {
+  display: grid;
+  gap: 5px;
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.86);
+}
+
+.iaw-consoleMetaValue,
+.iaw-detailStatValue,
+.iaw-detailMetric strong {
+  font-size: 1rem;
+  letter-spacing: -0.03em;
+}
+
+.iaw-titleAccent {
+  color: rgba(17, 25, 37, 0.54);
+}
+
+.iaw-heroCopy {
+  display: grid;
+  gap: 12px;
+}
+
+.iaw-landingCopy {
+  display: grid;
+  gap: 22px;
+  align-content: start;
+}
+
+.iaw-builderHero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.08fr) minmax(320px, 0.92fr);
+  gap: 20px;
+  align-items: start;
+}
+
+.iaw-builderLead,
+.iaw-historyHero,
+.iaw-governancePage {
+  display: grid;
+  gap: 18px;
+}
+
+.iaw-builderLead .iaw-composer {
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.iaw-builderLead .iaw-composerHeader {
+  padding-top: 4px;
+}
+
+.iaw-builderIntro {
+  display: grid;
+  gap: 10px;
+}
+
+.iaw-builderSummary {
+  margin: 0;
+  max-width: 32rem;
+  color: var(--text-soft);
+  font-size: 0.98rem;
+  line-height: 1.5;
+}
+
+.iaw-builderSignals {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.iaw-builderSignal {
+  display: grid;
+  gap: 6px;
+  min-height: 92px;
+  padding: 14px 16px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: rgba(248, 250, 252, 0.92);
+}
+
+.iaw-builderSignal strong,
+.iaw-builderCalloutRow strong {
+  font-size: 1rem;
+  letter-spacing: -0.02em;
+}
+
+.iaw-builderPreview {
+  display: grid;
+  gap: 12px;
+}
+
+.iaw-builderCallout {
+  display: grid;
+  gap: 10px;
+}
+
+.iaw-builderCalloutRow {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: center;
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: rgba(248, 250, 252, 0.92);
+}
+
+.iaw-heroSummary,
+.iaw-archiveTitle {
+  margin: 0;
+}
+
+.iaw-heroSummary {
+  max-width: 34rem;
+  color: var(--text-soft);
+  font-size: 1rem;
+  line-height: 1.7;
+}
+
+.iaw-landingActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  align-items: center;
+}
+
+.iaw-gatePanel {
+  display: grid;
+  gap: 20px;
+  background:
+    radial-gradient(
+      circle at top right,
+      rgba(36, 93, 139, 0.14),
+      transparent 26%
+    ),
+    linear-gradient(
+      180deg,
+      rgba(255, 252, 247, 0.74),
+      rgba(255, 252, 247, 0.34)
+    );
+}
+
+.iaw-gateHeader,
+.iaw-gateOutput {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: center;
+}
+
+.iaw-gateBadge {
+  display: inline-flex;
+  align-items: center;
+  min-height: 38px;
+  padding: 0 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(17, 25, 37, 0.1);
+  background: rgba(255, 252, 247, 0.54);
+  font-family: var(--font-meta), monospace;
+  font-size: 0.74rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.iaw-gateVisual {
+  position: relative;
+  min-height: 180px;
+  border-radius: 28px;
+  border: 1px solid rgba(17, 25, 37, 0.08);
+  background:
+    radial-gradient(
+      circle at 50% 30%,
+      rgba(36, 93, 139, 0.12),
+      transparent 28%
+    ),
+    linear-gradient(
+      180deg,
+      rgba(255, 252, 247, 0.52),
+      rgba(255, 252, 247, 0.24)
+    );
+  overflow: hidden;
+}
+
+.iaw-gateVisual::before {
+  content: "";
+  position: absolute;
+  inset: 18px;
+  border-radius: 22px;
+  border: 1px solid rgba(17, 25, 37, 0.06);
+  background:
+    linear-gradient(
+        120deg,
+        transparent 18%,
+        rgba(17, 25, 37, 0.05) 18.5%,
+        transparent 19.3%
+      )
+      0 0 / 180px 140px,
+    linear-gradient(180deg, rgba(17, 25, 37, 0.03), transparent);
+}
+
+.iaw-gateLock {
+  position: absolute;
+  inset: 34px 0 0;
+  display: grid;
+  justify-items: center;
+}
+
+.iaw-gateLockShackle {
+  width: 70px;
+  height: 54px;
+  border: 8px solid rgba(17, 25, 37, 0.16);
+  border-bottom: 0;
+  border-radius: 999px 999px 0 0;
+}
+
+.iaw-gateLockBody {
+  width: 118px;
+  height: 84px;
+  margin-top: -6px;
+  border-radius: 28px;
+  border: 1px solid rgba(17, 25, 37, 0.1);
+  background: rgba(255, 252, 247, 0.7);
+  box-shadow: 0 18px 40px rgba(17, 25, 37, 0.08);
+}
+
+.iaw-gateBars {
+  position: absolute;
+  left: 28px;
+  right: 28px;
+  bottom: 28px;
+  display: grid;
+  gap: 10px;
+}
+
+.iaw-gateBars span {
+  display: block;
+  height: 10px;
+  border-radius: 999px;
+  background: linear-gradient(
+    90deg,
+    rgba(36, 93, 139, 0.18),
+    rgba(176, 108, 70, 0.18)
+  );
+}
+
+.iaw-gateBars span:nth-child(1) {
+  width: 82%;
+}
+.iaw-gateBars span:nth-child(2) {
+  width: 62%;
+}
+.iaw-gateBars span:nth-child(3) {
+  width: 74%;
+}
+
+.iaw-gateOutputs {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px 14px;
+}
+
+.iaw-gateOutput {
+  min-height: 52px;
+  padding: 0 14px;
+  border-radius: 18px;
+  border: 1px solid rgba(17, 25, 37, 0.08);
+  background: rgba(255, 252, 247, 0.4);
+  font-family: var(--font-meta), monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.iaw-gateDot {
+  width: 9px;
+  height: 9px;
+  border-radius: 999px;
+  background: linear-gradient(
+    135deg,
+    rgba(36, 93, 139, 0.7),
+    rgba(176, 108, 70, 0.7)
+  );
+  box-shadow: 0 0 0 6px rgba(255, 252, 247, 0.42);
+}
+
+.iaw-summaryRail,
+.iaw-proofRail {
+  display: grid;
+  gap: 14px;
+}
+
+.iaw-summaryRail {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
+.iaw-summaryTile,
+.iaw-proofCard {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.9),
+    rgba(255, 255, 255, 0.7)
+  );
+  box-shadow: 0 10px 22px rgba(15, 23, 42, 0.05);
+}
+
+.iaw-summaryTile {
+  display: grid;
+  gap: 8px;
+  min-height: 104px;
+  padding: 18px;
+  border-radius: 22px;
+  align-content: end;
+}
+
+.iaw-summaryTileWide {
+  background:
+    radial-gradient(
+      circle at top right,
+      rgba(36, 93, 139, 0.16),
+      transparent 34%
+    ),
+    linear-gradient(
+      180deg,
+      rgba(255, 252, 247, 0.76),
+      rgba(255, 252, 247, 0.34)
+    );
+}
+
+.iaw-summaryValue {
+  font-family: var(--font-body), sans-serif;
+  font-size: clamp(1.9rem, 3.4vw, 2.4rem);
+  font-weight: 700;
+  line-height: 0.94;
+  letter-spacing: -0.05em;
+}
+
+.iaw-summaryLabel,
+.iaw-proofLabel {
+  font-family: var(--font-meta), monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.iaw-proofRail {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.iaw-proofCard {
+  min-height: 180px;
+  padding: 20px;
+  border-radius: 30px;
+  display: grid;
+  align-content: space-between;
+}
+
+.iaw-proofCard::before {
+  content: "";
+  position: absolute;
+  inset: 18px;
+  border-radius: 24px;
+  background:
+    radial-gradient(
+      circle at 75% 20%,
+      rgba(36, 93, 139, 0.12),
+      transparent 28%
+    ),
+    linear-gradient(180deg, rgba(17, 25, 37, 0.04), transparent 55%);
+}
+
+.iaw-proofGlyph {
+  position: relative;
+  width: 88px;
+  height: 88px;
+  border-radius: 28px;
+  border: 1px solid rgba(17, 25, 37, 0.08);
+  background: rgba(255, 252, 247, 0.62);
+  backdrop-filter: blur(20px);
+}
+
+.iaw-proofGlyph::before,
+.iaw-proofGlyph::after {
+  content: "";
+  position: absolute;
+  border-radius: 999px;
+}
+
+.iaw-proofGlyphZip::before {
+  inset: 18px 22px;
+  border: 1px solid rgba(17, 25, 37, 0.16);
+}
+
+.iaw-proofGlyphZip::after {
+  left: 50%;
+  top: 22px;
+  width: 1px;
+  height: 44px;
+  background: rgba(17, 25, 37, 0.18);
+}
+
+.iaw-proofGlyphDiagram::before {
+  top: 18px;
+  left: 18px;
+  width: 18px;
+  height: 18px;
+  background: rgba(36, 93, 139, 0.18);
+  box-shadow:
+    34px 22px 0 rgba(176, 108, 70, 0.16),
+    18px 42px 0 rgba(17, 25, 37, 0.1);
+}
+
+.iaw-proofGlyphDiagram::after {
+  inset: 22px;
+  border: 1px solid transparent;
+  border-top-color: rgba(17, 25, 37, 0.16);
+  border-left-color: rgba(17, 25, 37, 0.16);
+  transform: rotate(-12deg);
+}
+
+.iaw-proofGlyphHistory::before {
+  inset: 18px;
+  border: 1px solid rgba(17, 25, 37, 0.14);
+}
+
+.iaw-proofGlyphHistory::after {
+  top: 26px;
+  left: 24px;
+  width: 40px;
+  height: 1px;
+  background: rgba(17, 25, 37, 0.18);
+  box-shadow:
+    0 14px 0 rgba(17, 25, 37, 0.18),
+    0 28px 0 rgba(17, 25, 37, 0.18);
+}
+
+.iaw-proofGlyphRules::before {
+  inset: 20px;
+  background: linear-gradient(
+    135deg,
+    rgba(36, 93, 139, 0.16),
+    rgba(176, 108, 70, 0.18)
+  );
+}
+
+.iaw-proofGlyphRules::after {
+  inset: 30px;
+  border: 1px solid rgba(17, 25, 37, 0.16);
+}
+
+.iaw-stage {
+  display: grid;
+}
+
+.iaw-stageShell,
+.iaw-surface,
+.iaw-governancePanel,
+.callbackCard {
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: calc(var(--radius) + 4px);
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.94),
+    rgba(255, 255, 255, 0.82)
+  );
+  box-shadow: var(--shadow);
+}
+
+.iaw-stageShell {
+  position: relative;
+  min-height: 300px;
+  padding: 18px;
+}
+
+.iaw-stageShell::before {
+  content: "";
+  position: absolute;
+  inset: 10px;
+  border-radius: calc(var(--radius) - 6px);
+  border: 1px solid rgba(15, 23, 42, 0.05);
+  background:
+    linear-gradient(rgba(15, 23, 42, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(15, 23, 42, 0.035) 1px, transparent 1px),
+    radial-gradient(
+      circle at 30% 24%,
+      rgba(31, 78, 121, 0.08),
+      transparent 28%
+    ),
+    radial-gradient(
+      circle at 74% 68%,
+      rgba(90, 107, 127, 0.08),
+      transparent 28%
+    ),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.9), rgba(245, 249, 252, 0.76));
+  background-size:
+    28px 28px,
+    28px 28px,
+    auto,
+    auto,
+    auto;
+}
+
+.iaw-stageLanding .iaw-stageShell {
+  min-height: 620px;
+  padding: 30px;
+}
+
+.iaw-stageWorkspace .iaw-stageShell {
+  min-height: 220px;
+  padding: 16px;
+}
+
+.iaw-stageHalo,
+.iaw-stageConstellation,
+.iaw-stageOrbit,
+.iaw-stageBeam {
+  position: absolute;
+  pointer-events: none;
+}
+
+.iaw-stageHalo {
+  border-radius: 999px;
+  filter: blur(30px);
+  opacity: 0.34;
+  animation: iawDrift 16s ease-in-out infinite;
+}
+
+.iaw-stageHaloA {
+  top: 32px;
+  left: 22%;
+  width: 140px;
+  height: 140px;
+  background: rgba(31, 78, 121, 0.14);
+}
+
+.iaw-stageHaloB {
+  right: 12%;
+  bottom: 24px;
+  width: 160px;
+  height: 160px;
+  background: rgba(90, 107, 127, 0.12);
+  animation-delay: -7s;
+}
+
+.iaw-stageConstellation {
+  inset: 0;
+  background:
+    linear-gradient(
+        120deg,
+        transparent 18%,
+        rgba(15, 23, 42, 0.04) 18.5%,
+        transparent 19.3%
+      )
+      0 0 / 180px 140px,
+    linear-gradient(
+        120deg,
+        transparent 46%,
+        rgba(15, 23, 42, 0.04) 46.4%,
+        transparent 47.1%
+      )
+      20px 30px / 220px 160px;
+}
+
+.iaw-stageOrbit {
+  border: 1px solid rgba(15, 23, 42, 0.06);
+  border-radius: 999px;
+}
+
+.iaw-stageOrbitA {
+  top: 42px;
+  left: 48px;
+  width: 280px;
+  height: 280px;
+}
+
+.iaw-stageOrbitB {
+  right: 34px;
+  bottom: 42px;
+  width: 248px;
+  height: 248px;
+}
+
+.iaw-stageBeam {
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(17, 25, 37, 0.14),
+    transparent
+  );
+}
+
+.iaw-stageBeamA {
+  top: 190px;
+  left: 150px;
+  width: 320px;
+  transform: rotate(12deg);
+}
+
+.iaw-stageBeamB {
+  right: 120px;
+  bottom: 152px;
+  width: 240px;
+  transform: rotate(-18deg);
+}
+
+.iaw-stageNode,
+.iaw-stageCore,
+.iaw-chip,
+.iaw-moduleCard,
+.iaw-explanationCard,
+.iaw-historyCard,
+.iaw-governanceModuleCard {
+  position: relative;
+  z-index: 1;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(12px);
+}
+
+.iaw-stageNode,
+.iaw-stageCore {
+  padding: 14px 16px;
+  border-radius: 18px;
+}
+
+.iaw-stageNode {
+  position: absolute;
+  width: 168px;
+}
+
+.iaw-stageNodeInput {
+  top: 64px;
+  left: 34px;
+}
+
+.iaw-stageNodeOutput {
+  right: 34px;
+  bottom: 44px;
+}
+
+.iaw-stageCore {
+  position: absolute;
+  top: 126px;
+  left: 50%;
+  width: 208px;
+  transform: translateX(-50%);
+}
+
+.iaw-stageWorkspace .iaw-stageNodeInput {
+  top: 20px;
+  left: 20px;
+}
+
+.iaw-stageWorkspace .iaw-stageCore {
+  top: 60px;
+}
+
+.iaw-stageWorkspace .iaw-stageNodeOutput {
+  right: 20px;
+  bottom: 18px;
+}
+
+.iaw-stageWorkspace .iaw-stageOrbitA {
+  top: 24px;
+  left: auto;
+  right: 96px;
+  width: 150px;
+  height: 150px;
+}
+
+.iaw-stageWorkspace .iaw-stageOrbitB {
+  right: auto;
+  left: 88px;
+  bottom: 16px;
+  width: 128px;
+  height: 128px;
+}
+
+.iaw-stageWorkspace .iaw-stageBeamA {
+  top: 96px;
+  left: 88px;
+  width: 180px;
+}
+
+.iaw-stageWorkspace .iaw-stageBeamB {
+  right: 74px;
+  bottom: 72px;
+  width: 140px;
+}
+
+.iaw-stageLabel {
+  display: block;
+  margin-bottom: 12px;
+  font-family: var(--font-meta), monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.iaw-stageValue {
+  margin: 0;
+  font-size: 1.15rem;
+  line-height: 1.06;
+  letter-spacing: -0.04em;
+}
+
+.iaw-stageBars {
+  display: grid;
+  gap: 12px;
+}
+
+.iaw-stageBars span {
+  display: block;
+  height: 10px;
+  border-radius: 999px;
+  background: linear-gradient(
+    90deg,
+    rgba(31, 78, 121, 0.78),
+    rgba(90, 107, 127, 0.34)
+  );
+  animation: iawPulse 4s ease-in-out infinite;
+}
+
+.iaw-stageBars span:nth-child(2) {
+  width: 82%;
+}
+
+.iaw-stageBars span:nth-child(3) {
+  width: 58%;
+}
+
+.iaw-stageChip {
+  position: absolute;
+  z-index: 1;
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.8);
+  border: 1px solid var(--line);
+  font-family: var(--font-meta), monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.iaw-stageChipA {
+  right: 30px;
+  top: 34px;
+}
+.iaw-stageChipB {
+  left: 34%;
+  bottom: 28px;
+}
+.iaw-stageChipC {
+  left: 48%;
+  top: 70px;
+}
+.iaw-stageChipD {
+  left: 60px;
+  bottom: 34px;
+}
+
+.iaw-stageWorkspace .iaw-stageChipA {
+  top: 28px;
+  right: 26px;
+}
+
+.iaw-stageWorkspace .iaw-stageChipB {
+  left: 42px;
+  bottom: 26px;
+}
+
+.iaw-stageWorkspace .iaw-stageChipC {
+  left: 46%;
+  top: 32px;
+}
+
+.iaw-stageWorkspace .iaw-stageChipD {
+  left: auto;
+  right: 74px;
+  bottom: 110px;
+}
+
+.iaw-mainGrid,
+.iaw-workspaceGrid {
+  display: grid;
+  grid-template-columns: minmax(400px, 480px) minmax(0, 1fr);
+  gap: 24px;
+  align-items: start;
+}
+
+.iaw-workspaceSidebar {
+  display: grid;
+  gap: 18px;
+  align-content: start;
+}
+
+.iaw-surface,
+.iaw-archive {
+  padding: 20px;
+}
+
+.iaw-composerHeader,
+.iaw-detailHeader,
+.iaw-archiveHeader {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  align-items: flex-start;
+}
+
+.iaw-composerStats,
+.iaw-detailMeta,
+.iaw-historyFooter,
+.iaw-moduleMeta {
+  color: var(--muted);
+  font-family: var(--font-meta), monospace;
+  font-size: 0.74rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.iaw-starterList {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  margin: 18px 0 16px;
+}
+
+.iaw-starter {
+  min-width: 0;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: rgba(248, 250, 252, 0.9);
+  border-color: var(--line);
+  text-align: left;
+  display: grid;
+  gap: 6px;
+}
+
+.iaw-starterTitle,
+.iaw-detailLead,
+.iaw-detailRequest,
+.iaw-detailSummary,
+.iaw-historyText,
+.iaw-moduleTitle {
+  margin: 0;
+}
+
+.iaw-starterTitle {
+  font-size: 0.98rem;
+  line-height: 1.2;
+}
+
+.iaw-starterDetail {
+  color: var(--text-soft);
+  font-size: 0.86rem;
+  line-height: 1.45;
+}
+
+.iaw-requestField,
+.iaw-inlineField,
+.iaw-selectField,
+.iaw-stackArea {
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: rgba(248, 250, 252, 0.9);
+}
+
+.iaw-requestField {
+  min-height: 180px;
+  padding: 16px 18px;
+  font-size: 1rem;
+  line-height: 1.5;
+  letter-spacing: -0.02em;
+}
+
+.iaw-composerLanding {
+  background:
+    radial-gradient(
+      circle at top right,
+      rgba(36, 93, 139, 0.12),
+      transparent 28%
+    ),
+    linear-gradient(180deg, rgba(255, 252, 247, 0.7), rgba(255, 252, 247, 0.32));
+}
+
+.iaw-composerLanding .iaw-requestField {
+  min-height: 220px;
+  font-size: clamp(1.08rem, 1.9vw, 1.42rem);
+}
+
+.iaw-composerWorkspace .iaw-requestField {
+  min-height: 180px;
+}
+
+.iaw-composerFooter {
+  justify-content: space-between;
+  margin-top: 14px;
+}
+
+.iaw-error {
+  margin: 14px 0 0;
+  color: var(--danger);
+  line-height: 1.6;
+}
+
+.iaw-detailMeta {
+  flex-wrap: wrap;
+  margin: 14px 0 22px;
+}
+
+.iaw-detailStatsGrid,
+.iaw-detailMetricGrid {
+  display: grid;
+  gap: 10px;
+}
+
+.iaw-detailStatsGrid {
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  margin: 14px 0 22px;
+}
+
+.iaw-detailMetricGrid {
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+}
+
+.iaw-detailMetricWide {
+  grid-column: span 2;
+}
+
+.iaw-runHero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 16px;
+  align-items: start;
+  margin-bottom: 6px;
+}
+
+.iaw-runHeroCopy,
+.iaw-runHeroMeta {
+  display: grid;
+  gap: 10px;
+}
+
+.iaw-runHeroMeta {
+  justify-items: end;
+}
+
+.iaw-runHeroSummary,
+.iaw-runActionMeta {
+  margin: 0;
+  color: var(--text-soft);
+}
+
+.iaw-runHeroSummary {
+  max-width: 48rem;
+  line-height: 1.6;
+}
+
+.iaw-detailGrid,
+.iaw-detailOverview {
+  display: grid;
+  grid-template-columns: minmax(0, 0.78fr) minmax(320px, 0.92fr);
+  gap: 18px;
+}
+
+.iaw-detailNarrative,
+.iaw-detailVisuals,
+.iaw-governanceForm {
+  display: grid;
+  gap: 18px;
+}
+
+.iaw-detailEmpty,
+.iaw-emptyState {
+  display: grid;
+  gap: 12px;
+  min-height: 260px;
+  align-content: center;
+}
+
+.iaw-detailBlock {
+  display: grid;
+  gap: 10px;
+  align-content: start;
+  padding: 18px;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: rgba(248, 250, 252, 0.94);
+}
+
+.iaw-detailToolbar {
+  margin: 0 0 18px;
+}
+
+.iaw-detailTabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.iaw-detailTab {
+  min-height: 36px;
+  padding: 0 12px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: rgba(248, 250, 252, 0.94);
+  color: var(--text-soft);
+  font-family: var(--font-meta), monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.iaw-detailTabActive {
+  border-color: rgba(31, 78, 121, 0.24);
+  background: rgba(31, 78, 121, 0.08);
+  color: var(--text);
+}
+
+.iaw-detailPanel {
+  display: grid;
+  gap: 14px;
+}
+
+.iaw-runLoading,
+.iaw-runLoadingGrid,
+.iaw-runDetailsGrid {
+  display: grid;
+  gap: 18px;
+}
+
+.iaw-runLoadingHeader,
+.iaw-runActionDock,
+.iaw-runLoadingMeta {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: center;
+}
+
+.iaw-runLoadingRail {
+  display: grid;
+  gap: 10px;
+}
+
+.iaw-runLoadingBar {
+  height: 12px;
+  border-radius: 999px;
+  overflow: hidden;
+  background: rgba(31, 78, 121, 0.08);
+}
+
+.iaw-runLoadingBar span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--accent), #74a0c7);
+  box-shadow: 0 0 18px rgba(31, 78, 121, 0.18);
+}
+
+.iaw-runLoadingGrid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.iaw-runLoadingCard,
+.iaw-runFocusCard {
+  padding: 18px;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: rgba(248, 250, 252, 0.94);
+}
+
+.iaw-runLoadingPrompt,
+.iaw-runFailureTitle {
+  margin: 0;
+}
+
+.iaw-runStepList {
+  display: grid;
+  gap: 10px;
+}
+
+.iaw-runStep {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  color: var(--text-soft);
+  background: rgba(255, 255, 255, 0.78);
+}
+
+.iaw-runStepActive {
+  border-color: rgba(31, 78, 121, 0.2);
+  background: rgba(31, 78, 121, 0.08);
+  color: var(--text);
+}
+
+.iaw-runStepIndex {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.08);
+  font-family: var(--font-meta), monospace;
+  font-size: 0.68rem;
+}
+
+.iaw-runFocusCard {
+  padding: 0;
+  overflow: hidden;
+  border: 0;
+  background: transparent;
+}
+
+.iaw-runFocusCard .iaw-diagramCanvas,
+.iaw-runFocusCard .iaw-diagramEmpty {
+  height: 560px;
+  border: 0;
+  border-radius: 0;
+}
+
+.iaw-runFailureState {
+  display: grid;
+  gap: 12px;
+  min-height: 320px;
+  align-content: center;
+  padding: 26px;
+}
+
+.iaw-runFocusShell {
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  background: rgba(248, 250, 252, 0.94);
+}
+
+.iaw-runActionDock {
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 18px 18px;
+  border-top: 1px solid rgba(15, 23, 42, 0.08);
+}
+
+.iaw-runActionButtons {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.iaw-runDetailsGrid {
+  grid-template-columns: minmax(0, 0.86fr) minmax(320px, 0.96fr);
+}
+
+.iaw-factList,
+.iaw-limitList {
+  display: grid;
+  gap: 8px;
+}
+
+.iaw-factRow,
+.iaw-limitRow {
+  display: grid;
+  gap: 6px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  border: 1px solid var(--line);
+  background: rgba(248, 250, 252, 0.9);
+}
+
+.iaw-factTitle {
+  margin: 0;
+  font-size: 0.92rem;
+  letter-spacing: -0.02em;
+}
+
+.iaw-factBody {
+  margin: 0;
+  color: var(--text-soft);
+  line-height: 1.55;
+}
+
+.iaw-detailRequest,
+.iaw-detailSummary,
+.iaw-detailHint,
+.iaw-fileRow,
+.iaw-moduleReason,
+.iaw-moduleSource,
+.iaw-historyText {
+  line-height: 1.65;
+}
+
+.iaw-detailEmptyVisual {
+  position: relative;
+  width: 220px;
+  height: 120px;
+}
+
+.iaw-detailEmptyDot,
+.iaw-detailEmptyRail {
+  position: absolute;
+  border-radius: 999px;
+}
+
+.iaw-detailEmptyDot {
+  width: 18px;
+  height: 18px;
+  background: linear-gradient(
+    135deg,
+    rgba(36, 93, 139, 0.24),
+    rgba(176, 108, 70, 0.2)
+  );
+  box-shadow: 0 0 0 8px rgba(255, 252, 247, 0.46);
+}
+
+.iaw-detailEmptyDotA {
+  top: 18px;
+  left: 18px;
+}
+
+.iaw-detailEmptyDotB {
+  right: 24px;
+  bottom: 22px;
+}
+
+.iaw-detailEmptyRail {
+  top: 50%;
+  left: 38px;
+  right: 42px;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    rgba(36, 93, 139, 0.22),
+    rgba(176, 108, 70, 0.2)
+  );
+  transform: translateY(-50%) rotate(-12deg);
+}
+
+.iaw-status {
+  display: inline-flex;
+  align-items: center;
+  min-height: 38px;
+  padding: 0 14px;
+  border-radius: 999px;
+  font-family: var(--font-meta), monospace;
+  font-size: 0.74rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.iaw-statusPending {
+  background: rgba(36, 93, 139, 0.12);
+  color: var(--accent);
+}
+.iaw-statusReady {
+  background: rgba(48, 122, 106, 0.14);
+  color: #1e5b4d;
+}
+.iaw-statusFailed {
+  background: rgba(141, 47, 47, 0.12);
+  color: var(--danger);
+}
+
+.iaw-explanationList,
+.iaw-moduleList,
+.iaw-governanceModuleList {
+  display: grid;
+  gap: 12px;
+}
+
+.iaw-explanationCard,
+.iaw-moduleCard,
+.iaw-governanceModuleCard,
+.iaw-historyCard {
+  padding: 16px;
+  border-radius: 24px;
+}
+
+.iaw-explanationCard,
+.iaw-moduleCard {
+  background: rgba(255, 252, 247, 0.5);
+}
+
+.iaw-explanationTitle {
+  margin: 0 0 8px;
+  font-size: 1rem;
+}
+
+.iaw-chipRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.iaw-chip {
+  padding: 10px 14px;
+  border-radius: 999px;
+}
+
+.iaw-fileList {
+  display: grid;
+  gap: 8px;
+}
+
+.iaw-fileRow {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: rgba(248, 250, 252, 0.9);
+  border: 1px solid var(--line);
+  font-family: var(--font-meta), monospace;
+  font-size: 0.74rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.iaw-diagramCanvas,
+.iaw-diagramEmpty {
+  height: 420px;
+  border-radius: 18px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  background:
+    linear-gradient(rgba(15, 23, 42, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(15, 23, 42, 0.03) 1px, transparent 1px),
+    linear-gradient(180deg, rgba(248, 250, 252, 0.96), rgba(241, 245, 249, 0.9));
+  background-size:
+    24px 24px,
+    24px 24px,
+    auto;
+}
+
+.iaw-diagramEmpty,
+.iaw-detailSkeleton {
+  display: grid;
+  gap: 16px;
+  place-content: center;
+  padding: 22px;
+}
+
+.iaw-ghostLine {
+  display: block;
+  height: 12px;
+  border-radius: 999px;
+  background: linear-gradient(
+    90deg,
+    rgba(36, 93, 139, 0.18),
+    rgba(176, 108, 70, 0.16)
+  );
+  animation: iawPulse 4.8s ease-in-out infinite;
+}
+
+.iaw-ghostLineWide {
+  width: 240px;
+}
+.iaw-ghostLineMid {
+  width: 180px;
+}
+.iaw-ghostLineNarrow {
+  width: 120px;
+}
+
+.react-flow__controls {
+  border: 1px solid var(--line);
+  box-shadow: 0 12px 24px rgba(15, 23, 42, 0.08);
+}
+
+.react-flow__controls button,
+.react-flow__attribution {
+  background: rgba(255, 252, 247, 0.92);
+}
+
+.iaw-flowNode .react-flow__node-default,
+.iaw-flowNode {
+  font-family: var(--font-body), sans-serif;
+}
+
+.iaw-archive {
+  display: grid;
+  gap: 16px;
+  border: 1px solid var(--line);
+  border-radius: calc(var(--radius) + 4px);
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.94),
+    rgba(255, 255, 255, 0.82)
+  );
+}
+
+.iaw-archiveTitle {
+  margin-top: 6px;
+  font-size: clamp(1.2rem, 1.7vw, 1.45rem);
+}
+
+.iaw-archiveFilters {
+  display: grid;
+  grid-template-columns: minmax(220px, 1.5fr) repeat(3, minmax(0, 180px));
+  gap: 10px;
+}
+
+.iaw-filterField {
+  display: grid;
+  gap: 6px;
+}
+
+.iaw-filterInput,
+.iaw-filterSelect {
+  width: 100%;
+  min-height: 40px;
+  padding: 0 14px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: rgba(248, 250, 252, 0.94);
+}
+
+.iaw-runTable,
+.iaw-historyRail {
+  display: grid;
+  gap: 10px;
+}
+
+.iaw-runHead,
+.iaw-runRow {
+  display: grid;
+  grid-template-columns: 96px minmax(0, 1.3fr) 172px 110px 96px 62px;
+  gap: 12px;
+  align-items: start;
+}
+
+.iaw-runHead {
+  padding: 0 16px;
+  color: var(--muted);
+  font-family: var(--font-meta), monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.iaw-runRow {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: rgba(248, 250, 252, 0.94);
+  text-align: left;
+}
+
+.iaw-runRowActive {
+  border-color: rgba(31, 78, 121, 0.22);
+  background: linear-gradient(
+    180deg,
+    rgba(31, 78, 121, 0.08),
+    rgba(248, 250, 252, 0.98)
+  );
+}
+
+.iaw-runRow:hover {
+  border-color: rgba(31, 78, 121, 0.16);
+}
+
+.iaw-runPrimary {
+  min-width: 0;
+  display: grid;
+  gap: 4px;
+}
+
+.iaw-runText {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+  line-height: 1.35;
+  font-weight: 600;
+}
+
+.iaw-runSubtext {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+  color: var(--text-soft);
+  font-size: 0.9rem;
+  line-height: 1.35;
+}
+
+.iaw-runCell {
+  min-width: 0;
+  color: var(--text-soft);
+  font-size: 0.9rem;
+}
+
+.iaw-runCell::before {
+  display: none;
+  content: attr(data-label);
+  margin-bottom: 4px;
+  color: var(--muted);
+  font-family: var(--font-meta), monospace;
+  font-size: 0.68rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.iaw-runCellMono {
+  font-family: var(--font-meta), monospace;
+  font-size: 0.74rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.iaw-statusInline {
+  min-height: 30px;
+  padding: 0 10px;
+  font-size: 0.68rem;
+  letter-spacing: 0.12em;
+}
+
+.iaw-resourceList {
+  display: grid;
+  gap: 10px;
+}
+
+.iaw-resourceRow {
+  display: grid;
+  gap: 8px;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: rgba(248, 250, 252, 0.94);
+}
+
+.iaw-resourceMetaRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.iaw-resourceBadge {
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px;
+  padding: 0 8px;
+  border-radius: 999px;
+  font-family: var(--font-meta), monospace;
+  font-size: 0.66rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.iaw-resourceBadgePrivate {
+  background: rgba(15, 23, 42, 0.08);
+}
+
+.iaw-resourceBadgePublic {
+  background: rgba(31, 78, 121, 0.08);
+}
+
+.iaw-resourceId {
+  color: var(--muted);
+  font-family: var(--font-meta), monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.iaw-resourceTitle,
+.iaw-resourceBody {
+  margin: 0;
+}
+
+.iaw-resourceTitle {
+  font-size: 0.98rem;
+  letter-spacing: -0.02em;
+}
+
+.iaw-resourceBody {
+  color: var(--text-soft);
+  line-height: 1.5;
+}
+
+.iaw-historyCard {
+  background:
+    radial-gradient(
+      circle at top right,
+      rgba(36, 93, 139, 0.1),
+      transparent 24%
+    ),
+    rgba(255, 252, 247, 0.42);
+  border-color: var(--line);
+  text-align: left;
+  display: grid;
+  gap: 12px;
+  min-height: 180px;
+  align-content: space-between;
+}
+
+.iaw-historyCardActive {
+  border-color: rgba(36, 93, 139, 0.28);
+  background: linear-gradient(
+    180deg,
+    rgba(36, 93, 139, 0.12),
+    rgba(255, 252, 247, 0.62)
+  );
+}
+
+.iaw-historyFooter {
+  display: flex;
+  justify-content: space-between;
+}
+
+.iaw-archiveEmpty {
+  min-height: 160px;
+}
+
+.iaw-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  display: grid;
+  justify-content: end;
+}
+
+.iaw-overlayBackdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(9, 12, 18, 0.32);
+  backdrop-filter: blur(6px);
+}
+
+.iaw-governancePanel {
+  position: relative;
+  width: min(680px, 100vw);
+  height: 100vh;
+  padding: 24px;
+  border-radius: 0;
+  border-left: 1px solid rgba(17, 25, 37, 0.08);
+  overflow-y: auto;
+}
+
+.iaw-governanceGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.iaw-governancePageGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.iaw-stackField {
+  display: grid;
+  gap: 8px;
+}
+
+.iaw-inlineField,
+.iaw-selectField,
+.iaw-stackArea {
+  padding: 14px 16px;
+}
+
+.iaw-stackArea {
+  min-height: 140px;
+}
+
+.iaw-stackAreaCompact {
+  min-height: 96px;
+}
+
+.iaw-governanceModules {
+  display: grid;
+  gap: 14px;
+}
+
+.iaw-governanceModuleMeta {
+  flex-wrap: wrap;
+}
+
+.iaw-governanceRequiredToggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 40px;
+  padding: 0 12px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: rgba(248, 250, 252, 0.9);
+  color: var(--text-soft);
+  font-family: var(--font-meta), monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.iaw-governanceRequiredToggle input {
+  margin: 0;
+}
+
+.iaw-governanceBudget {
+  display: grid;
+  gap: 14px;
+}
+
+.iaw-governanceBudgetStats {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.iaw-governanceBudgetStat {
+  display: grid;
+  gap: 6px;
+  padding: 14px 16px;
+  border: 1px solid rgba(17, 25, 37, 0.08);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.6);
+}
+
+.iaw-governanceBudgetStat strong {
+  font-size: 1.05rem;
+  letter-spacing: -0.03em;
+}
+
+.iaw-governanceObservability {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.iaw-governanceLink {
+  display: grid;
+  gap: 6px;
+  padding: 14px 16px;
+  border: 1px solid rgba(17, 25, 37, 0.08);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.72);
+  color: var(--text);
+  text-decoration: none;
+  transition:
+    transform 140ms ease,
+    border-color 140ms ease,
+    background 140ms ease;
+}
+
+.iaw-governanceLink strong {
+  font-size: 1rem;
+  letter-spacing: -0.03em;
+}
+
+.iaw-governanceLink:hover {
+  transform: translateY(-1px);
+  border-color: rgba(17, 25, 37, 0.16);
+  background: rgba(255, 255, 255, 0.9);
+}
+
+.iaw-governanceFooter {
+  justify-content: flex-start;
+  flex-wrap: wrap;
+}
+
+.callbackPage {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 32px 24px;
+}
+
+.callbackCard {
+  width: min(680px, 100%);
+  padding: 28px;
+}
+
+.callbackTitle {
+  margin: 10px 0 12px;
+  font-size: clamp(2.8rem, 8vw, 5rem);
+}
+
+.iaw-primaryButton:hover,
+.iaw-secondaryButton:hover,
+.iaw-starter:hover,
+.iaw-historyCard:hover {
+  transform: translateY(-1px);
+}
+
+.iaw-primaryButton:disabled,
+.iaw-secondaryButton:disabled {
+  cursor: not-allowed;
+  opacity: 0.62;
+  transform: none;
+}
+
+@keyframes iawPulse {
+  0%,
+  100% {
+    opacity: 0.52;
+    transform: scaleX(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scaleX(1.05);
+  }
+}
+
+@keyframes iawDrift {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(12px, -10px, 0);
+  }
+}
+
+@media (max-width: 1100px) {
+  .iaw-appShell,
+  .iaw-landingHero,
+  .iaw-builderHero,
+  .iaw-mainGrid,
+  .iaw-workspaceGrid,
+  .iaw-detailGrid,
+  .iaw-detailOverview,
+  .iaw-runDetailsGrid,
+  .iaw-runLoadingGrid,
+  .iaw-governancePageGrid,
+  .iaw-governanceGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .iaw-summaryRail,
+  .iaw-proofRail,
+  .iaw-builderSignals,
+  .iaw-starterList,
+  .iaw-governanceObservability,
+  .iaw-governanceBudgetStats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .iaw-workspaceRail {
+    position: static;
+  }
+
+  .iaw-archiveFilters {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .iaw-workspaceRailStats {
+    grid-template-columns: 1fr;
+  }
+
+  .iaw-runHead {
+    display: none;
+  }
+
+  .iaw-runRow {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .iaw-runPrimary {
+    grid-column: 1 / -1;
+  }
+
+  .iaw-runCell::before {
+    display: block;
+  }
+
+  .iaw-runPrimary::before {
+    display: block;
+    content: attr(data-label);
+    margin-bottom: 4px;
+    color: var(--muted);
+    font-family: var(--font-meta), monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  .iaw-stageShell {
+    min-height: 280px;
+  }
+
+  .iaw-stageLanding .iaw-stageShell {
+    min-height: 520px;
+  }
+}
+
+@media (max-width: 820px) {
+  .iaw-page {
+    padding: 20px 14px 56px;
+  }
+
+  .iaw-header,
+  .iaw-composerHeader,
+  .iaw-runLoadingHeader,
+  .iaw-runActionDock,
+  .iaw-runLoadingMeta,
+  .iaw-detailHeader,
+  .iaw-archiveHeader {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .iaw-title {
+    font-size: clamp(3.2rem, 16vw, 5rem);
+  }
+
+  .iaw-summaryRail,
+  .iaw-proofRail,
+  .iaw-builderSignals,
+  .iaw-starterList,
+  .iaw-governanceBudgetStats,
+  .iaw-governancePageGrid,
+  .iaw-archiveFilters,
+  .iaw-workspaceRailStats,
+  .iaw-detailStatsGrid,
+  .iaw-detailMetricGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .iaw-appShell {
+    gap: 16px;
+  }
+
+  .iaw-workspaceRail {
+    padding: 14px;
+  }
+
+  .iaw-consoleMetaGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .iaw-detailMetricWide {
+    grid-column: auto;
+  }
+
+  .iaw-runHero {
+    grid-template-columns: 1fr;
+  }
+
+  .iaw-runHeroMeta {
+    justify-items: start;
+  }
+
+  .iaw-landingActions {
+    align-items: flex-start;
+  }
+
+  .iaw-stageNode,
+  .iaw-stageCore {
+    width: 160px;
+  }
+
+  .iaw-stageCore {
+    width: 180px;
+    top: 126px;
+  }
+
+  .iaw-stageLanding .iaw-stageShell {
+    min-height: 460px;
+    padding: 20px;
+  }
+
+  .iaw-stageWorkspace .iaw-stageShell {
+    min-height: 210px;
+  }
+
+  .iaw-stageLanding .iaw-stageOrbit,
+  .iaw-stageWorkspace .iaw-stageOrbit,
+  .iaw-stageBeam {
+    display: none;
+  }
+
+  .iaw-stageChipD {
+    left: 24px;
+    bottom: 22px;
+  }
+
+  .iaw-governancePanel {
+    width: 100vw;
+  }
+
+  .iaw-runRow {
+    grid-template-columns: 1fr;
+  }
+
+  .iaw-runFocusCard .iaw-diagramCanvas,
+  .iaw-runFocusCard .iaw-diagramEmpty {
+    height: 420px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}

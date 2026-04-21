@@ -1,0 +1,8 @@
+{
+  "packages": {
+    "@infrastructure-as-words/contracts": {
+      "allowWorkspaceImports": []
+    }
+  }
+}
+

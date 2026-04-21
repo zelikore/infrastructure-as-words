@@ -1,0 +1,10 @@
+{
+  "moduleId": "iaw-example-website-with-api",
+  "label": "Example Website Platform Stack",
+  "category": "delivery",
+  "usedInDeployment": false,
+  "requiredByDefault": false,
+  "capabilities": ["example", "spa", "api", "persistence"],
+  "description": "Composable full-stack website baseline for internal developer platforms.",
+  "documentationPath": "README.md"
+}

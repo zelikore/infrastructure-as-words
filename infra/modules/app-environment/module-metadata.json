@@ -1,0 +1,19 @@
+{
+  "moduleId": "iaw-app-environment",
+  "label": "App Environment",
+  "category": "platform",
+  "usedInDeployment": true,
+  "requiredByDefault": false,
+  "capabilities": [
+    "spa",
+    "api",
+    "cognito",
+    "cloudfront",
+    "dynamodb",
+    "s3",
+    "observability",
+    "ssm-runtime-config"
+  ],
+  "description": "Composable full-stack application environment for SPA, API, data, observability, and shared auth + SSM admin integration.",
+  "documentationPath": "README.md"
+}

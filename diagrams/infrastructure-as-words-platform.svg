@@ -1,0 +1,101 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1480" height="860" viewBox="0 0 1480 860" fill="none">
+  <defs>
+    <style>
+      .title { font: 700 30px "SF Pro Display", "Inter", sans-serif; fill: #102030; }
+      .label { font: 600 18px "SF Pro Display", "Inter", sans-serif; fill: #102030; }
+      .meta { font: 500 13px "SF Pro Text", "Inter", sans-serif; fill: #4a5b6d; }
+      .small { font: 600 12px "SF Pro Text", "Inter", sans-serif; fill: #36506b; letter-spacing: .08em; text-transform: uppercase; }
+      .line { stroke: #38546f; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+      .dash { stroke-dasharray: 8 8; }
+    </style>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#38546f"/>
+    </marker>
+  </defs>
+
+  <rect width="1480" height="860" rx="36" fill="#f6f1e8"/>
+  <text x="64" y="78" class="title">Infrastructure as Words</text>
+  <text x="64" y="108" class="meta">Shared auth, branch-based delivery, Lambda orchestration, governed Bedrock generation, durable history, artifact storage, and CloudWatch observability.</text>
+
+  <rect x="48" y="150" width="242" height="630" rx="28" fill="#fdf9f2" stroke="#d4c5b0"/>
+  <text x="72" y="188" class="small">Experience</text>
+
+  <rect x="72" y="222" width="194" height="84" rx="24" fill="#e8f1ff" stroke="#7aa6d9"/>
+  <text x="94" y="258" class="label">Browser</text>
+  <text x="94" y="284" class="meta">Signed-out landing, signed-in workbench, React Flow run detail.</text>
+
+  <rect x="72" y="352" width="194" height="84" rx="24" fill="#ecf6ee" stroke="#7db08a"/>
+  <text x="94" y="388" class="label">CloudFront + S3 SPA</text>
+  <text x="94" y="414" class="meta">Static Next.js export served at dev and prod domains.</text>
+
+  <rect x="72" y="482" width="194" height="84" rx="24" fill="#f6eedf" stroke="#be9b5b"/>
+  <text x="94" y="518" class="label">Shared Cognito Hosted UI</text>
+  <text x="94" y="544" class="meta">Single auth domain used by both environments.</text>
+
+  <rect x="72" y="612" width="194" height="112" rx="24" fill="#efe9fb" stroke="#8b79bd"/>
+  <text x="94" y="648" class="label">Branch Delivery</text>
+  <text x="94" y="674" class="meta">Push to dev → deploy dev</text>
+  <text x="94" y="696" class="meta">Push to prod → deploy auth + prod</text>
+
+  <rect x="340" y="150" width="416" height="630" rx="28" fill="#fbfaf7" stroke="#d4c5b0"/>
+  <text x="364" y="188" class="small">Runtime</text>
+
+  <rect x="368" y="228" width="360" height="96" rx="24" fill="#e9f4ff" stroke="#709fd6"/>
+  <text x="394" y="266" class="label">API Gateway</text>
+  <text x="394" y="292" class="meta">JWT-protected HTTP API for submissions, history, admin settings, and health.</text>
+
+  <rect x="368" y="380" width="360" height="118" rx="24" fill="#e8f5f0" stroke="#5caa8d"/>
+  <text x="394" y="418" class="label">Lambda API Service</text>
+  <text x="394" y="444" class="meta">Input validation, generation orchestration, artifact packaging, cost accounting,</text>
+  <text x="394" y="466" class="meta">admin checks via SSM, and structured JSON logging.</text>
+
+  <rect x="368" y="560" width="360" height="144" rx="24" fill="#f4efe5" stroke="#b59255"/>
+  <text x="394" y="598" class="label">Bedrock Review + Generation Control</text>
+  <text x="394" y="624" class="meta">Governed module catalog, prompt shaping, output normalization,</text>
+  <text x="394" y="646" class="meta">budget reservations, and PR review against repo-owned requirements.</text>
+
+  <rect x="804" y="150" width="300" height="630" rx="28" fill="#fbfaf7" stroke="#d4c5b0"/>
+  <text x="828" y="188" class="small">State</text>
+
+  <rect x="832" y="238" width="244" height="104" rx="24" fill="#eef8f2" stroke="#72a488"/>
+  <text x="858" y="276" class="label">DynamoDB</text>
+  <text x="858" y="302" class="meta">Submission history, run detail, governance settings, and budget state.</text>
+
+  <rect x="832" y="396" width="244" height="104" rx="24" fill="#edf5ff" stroke="#709fd6"/>
+  <text x="858" y="434" class="label">S3 Artifacts</text>
+  <text x="858" y="460" class="meta">Generated Terraform zip archives with presigned downloads.</text>
+
+  <rect x="832" y="554" width="244" height="118" rx="24" fill="#f9efe8" stroke="#c88f6a"/>
+  <text x="858" y="592" class="label">SSM Parameter Store</text>
+  <text x="858" y="618" class="meta">Admin email and other sensitive runtime configuration.</text>
+
+  <rect x="1148" y="150" width="284" height="630" rx="28" fill="#fbfaf7" stroke="#d4c5b0"/>
+  <text x="1172" y="188" class="small">Operations</text>
+
+  <rect x="1176" y="232" width="228" height="112" rx="24" fill="#ececec" stroke="#808080"/>
+  <text x="1202" y="270" class="label">CloudWatch</text>
+  <text x="1202" y="296" class="meta">Structured logs, alarms, dashboards, and API/Lambda telemetry.</text>
+
+  <rect x="1176" y="396" width="228" height="104" rx="24" fill="#f3ecff" stroke="#8b79bd"/>
+  <text x="1202" y="434" class="label">SNS Alerts</text>
+  <text x="1202" y="460" class="meta">Environment alert topics for auth, API, and data health signals.</text>
+
+  <rect x="1176" y="560" width="228" height="130" rx="24" fill="#eef3ff" stroke="#709fd6"/>
+  <text x="1202" y="598" class="label">GitHub Actions</text>
+  <text x="1202" y="624" class="meta">CI, Bedrock PR review, dev deploys, and prod auth + prod deploys.</text>
+
+  <path d="M266 264 H344" class="line" marker-end="url(#arrow)"/>
+  <path d="M266 394 H344" class="line" marker-end="url(#arrow)"/>
+  <path d="M266 524 H344" class="line" marker-end="url(#arrow)"/>
+  <path d="M548 324 V376" class="line" marker-end="url(#arrow)"/>
+  <path d="M548 498 V556" class="line" marker-end="url(#arrow)"/>
+  <path d="M728 428 H828" class="line" marker-end="url(#arrow)"/>
+  <path d="M728 442 C 792 442, 792 442, 828 448" class="line dash" marker-end="url(#arrow)"/>
+  <path d="M728 620 H832" class="line" marker-end="url(#arrow)"/>
+  <path d="M956 342 V392" class="line" marker-end="url(#arrow)"/>
+  <path d="M956 500 V554" class="line" marker-end="url(#arrow)"/>
+  <path d="M1106 286 H1172" class="line" marker-end="url(#arrow)"/>
+  <path d="M1106 448 H1172" class="line" marker-end="url(#arrow)"/>
+  <path d="M1106 612 H1172" class="line" marker-end="url(#arrow)"/>
+  <path d="M290 668 C 390 740, 1170 740, 1290 690" class="line dash" marker-end="url(#arrow)"/>
+</svg>

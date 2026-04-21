@@ -1,0 +1,10 @@
+{
+  "moduleId": "iaw-submission-data",
+  "label": "Submission Data Plane",
+  "category": "data",
+  "usedInDeployment": true,
+  "requiredByDefault": false,
+  "capabilities": ["dynamodb", "s3", "artifact-storage"],
+  "description": "Persistence layer for request history, generation metadata, and zipped artifacts.",
+  "documentationPath": "README.md"
+}

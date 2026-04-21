@@ -1,0 +1,17 @@
+{
+  "name": "@infrastructure-as-words/infra",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "npm run build --workspace @infrastructure-as-words/contracts && npm run build --workspace @infrastructure-as-words/infra-config && tsx ../scripts/render-auth-terraform-vars.ts && tsx ../scripts/render-terraform-vars.ts --env dev && tsx ../scripts/render-terraform-vars.ts --env prod",
+    "fmt": "terraform -chdir=terraform fmt -recursive",
+    "test:modules": "../scripts/test-terraform-modules.sh",
+    "validate": "npm run build && terraform -chdir=terraform-auth init -backend=false && terraform -chdir=terraform-auth validate && terraform -chdir=terraform init -backend=false && terraform -chdir=terraform validate && npm run test:modules",
+    "typecheck": "npm run build"
+  },
+  "dependencies": {
+    "@infrastructure-as-words/contracts": "*",
+    "@infrastructure-as-words/infra-config": "*"
+  }
+}

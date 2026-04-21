@@ -1,0 +1,16 @@
+{
+  "moduleId": "iaw-shared-auth",
+  "label": "Shared Auth Domain",
+  "category": "identity",
+  "usedInDeployment": true,
+  "requiredByDefault": false,
+  "capabilities": [
+    "cognito",
+    "oauth",
+    "custom-domain",
+    "ssm",
+    "admin-bootstrap"
+  ],
+  "description": "Shared Cognito user pool, SSM-backed admin bootstrap, resource server scopes, and custom domain.",
+  "documentationPath": "README.md"
+}

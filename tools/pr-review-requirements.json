@@ -1,0 +1,50 @@
+{
+  "modelId": "us.anthropic.claude-opus-4-7",
+  "commentMarker": "<!-- iaw-pr-ai-review -->",
+  "maxDiffCharacters": 120000,
+  "failOnSeverities": ["critical", "high"],
+  "requirements": [
+    {
+      "id": "strict-typescript",
+      "title": "Strict TypeScript and runtime validation",
+      "severity": "high",
+      "instruction": "Flag changes that weaken strict typing, remove schema validation, or rely on unchecked any-like behavior for request, response, or model output handling."
+    },
+    {
+      "id": "security-secrets",
+      "title": "No hardcoded secrets or sensitive runtime config",
+      "severity": "critical",
+      "instruction": "Flag hardcoded secrets, tokens, credentials, admin identities, or other sensitive values that should live in SSM, Secrets Manager, or GitHub-managed secret configuration."
+    },
+    {
+      "id": "iam-least-privilege",
+      "title": "Least-privilege IAM and safe infrastructure changes",
+      "severity": "critical",
+      "instruction": "Flag wildcard IAM actions or resources, broad trust policies, destructive Terraform patterns, or infrastructure changes that weaken current security posture."
+    },
+    {
+      "id": "terraform-quality",
+      "title": "Module quality, Terraform tests, and environment roots",
+      "severity": "high",
+      "instruction": "Flag Terraform changes that bypass reusable modules without reason, skip module metadata/docs updates, or change module behavior without updating Terraform tests or validation paths."
+    },
+    {
+      "id": "observability-and-ops",
+      "title": "Operational maturity and observability",
+      "severity": "medium",
+      "instruction": "Flag changes that remove or break structured logging, alarms, dashboards, deployment safety, or branch-based delivery behavior."
+    },
+    {
+      "id": "submission-artifacts",
+      "title": "Challenge submission evidence",
+      "severity": "medium",
+      "instruction": "Flag changes that remove or stale the committed architecture diagram, grader docs, AGENTS guidance, or PR workflow evidence expected for the submission."
+    },
+    {
+      "id": "tests-and-regressions",
+      "title": "Tests for user-visible or security-relevant behavior",
+      "severity": "high",
+      "instruction": "Flag user-visible, persistence, auth, governance, cost, or infrastructure behavior changes that do not add or update the relevant tests."
+    }
+  ]
+}

@@ -1,0 +1,97 @@
+<mxfile host="app.diagrams.net" modified="2026-04-20T23:45:00.000Z" agent="Codex" version="26.0.11">
+  <diagram id="iaw-architecture" name="Architecture">
+    <mxGraphModel dx="1600" dy="960" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="900" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        <mxCell id="experience" value="Experience" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fdf9f2;strokeColor=#d4c5b0;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="120" width="250" height="650" as="geometry"/>
+        </mxCell>
+        <mxCell id="browser" value="Browser&#xa;Signed-out landing&#xa;Signed-in workbench" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f1ff;strokeColor=#7aa6d9;" vertex="1" parent="1">
+          <mxGeometry x="70" y="200" width="195" height="88" as="geometry"/>
+        </mxCell>
+        <mxCell id="spa" value="CloudFront + S3 SPA&#xa;Static Next.js export" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ecf6ee;strokeColor=#7db08a;" vertex="1" parent="1">
+          <mxGeometry x="70" y="340" width="195" height="88" as="geometry"/>
+        </mxCell>
+        <mxCell id="auth" value="Shared Cognito Hosted UI&#xa;auth.infrastructure-as-words.com" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f6eedf;strokeColor=#be9b5b;" vertex="1" parent="1">
+          <mxGeometry x="70" y="480" width="195" height="88" as="geometry"/>
+        </mxCell>
+        <mxCell id="branches" value="Branch Delivery&#xa;dev -&amp;gt; deploy dev&#xa;prod -&amp;gt; deploy auth + prod" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#efe9fb;strokeColor=#8b79bd;" vertex="1" parent="1">
+          <mxGeometry x="70" y="620" width="195" height="108" as="geometry"/>
+        </mxCell>
+        <mxCell id="runtime" value="Runtime" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fbfaf7;strokeColor=#d4c5b0;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="330" y="120" width="430" height="650" as="geometry"/>
+        </mxCell>
+        <mxCell id="api-gateway" value="API Gateway&#xa;JWT-protected HTTP API" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e9f4ff;strokeColor=#709fd6;" vertex="1" parent="1">
+          <mxGeometry x="365" y="210" width="360" height="92" as="geometry"/>
+        </mxCell>
+        <mxCell id="lambda" value="Lambda API Service&#xa;Validation, orchestration, packaging, cost accounting, admin checks, logging" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f5f0;strokeColor=#5caa8d;" vertex="1" parent="1">
+          <mxGeometry x="365" y="360" width="360" height="112" as="geometry"/>
+        </mxCell>
+        <mxCell id="bedrock" value="Bedrock Review + Generation Control&#xa;Governed modules, prompt shaping, normalization, PR review" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f4efe5;strokeColor=#b59255;" vertex="1" parent="1">
+          <mxGeometry x="365" y="540" width="360" height="132" as="geometry"/>
+        </mxCell>
+        <mxCell id="state" value="State" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fbfaf7;strokeColor=#d4c5b0;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="800" y="120" width="310" height="650" as="geometry"/>
+        </mxCell>
+        <mxCell id="ddb" value="DynamoDB&#xa;History, settings, budget" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#eef8f2;strokeColor=#72a488;" vertex="1" parent="1">
+          <mxGeometry x="835" y="225" width="240" height="96" as="geometry"/>
+        </mxCell>
+        <mxCell id="artifacts" value="S3 Artifacts&#xa;Terraform zip downloads" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#edf5ff;strokeColor=#709fd6;" vertex="1" parent="1">
+          <mxGeometry x="835" y="390" width="240" height="96" as="geometry"/>
+        </mxCell>
+        <mxCell id="ssm" value="SSM Parameter Store&#xa;Admin runtime config" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f9efe8;strokeColor=#c88f6a;" vertex="1" parent="1">
+          <mxGeometry x="835" y="555" width="240" height="110" as="geometry"/>
+        </mxCell>
+        <mxCell id="ops" value="Operations" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fbfaf7;strokeColor=#d4c5b0;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1140" y="120" width="290" height="650" as="geometry"/>
+        </mxCell>
+        <mxCell id="cw" value="CloudWatch&#xa;Logs, alarms, dashboards" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ececec;strokeColor=#808080;" vertex="1" parent="1">
+          <mxGeometry x="1175" y="220" width="225" height="102" as="geometry"/>
+        </mxCell>
+        <mxCell id="sns" value="SNS Alerts&#xa;Environment notifications" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f3ecff;strokeColor=#8b79bd;" vertex="1" parent="1">
+          <mxGeometry x="1175" y="390" width="225" height="96" as="geometry"/>
+        </mxCell>
+        <mxCell id="gha" value="GitHub Actions&#xa;CI, AI PR review, dev deploy, auth + prod deploy" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#eef3ff;strokeColor=#709fd6;" vertex="1" parent="1">
+          <mxGeometry x="1175" y="555" width="225" height="122" as="geometry"/>
+        </mxCell>
+        <mxCell id="e1" style="endArrow=block;html=1;rounded=0;" edge="1" parent="1" source="browser" target="api-gateway">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e2" style="endArrow=block;html=1;rounded=0;" edge="1" parent="1" source="spa" target="api-gateway">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e3" style="endArrow=block;html=1;rounded=0;dashed=1;" edge="1" parent="1" source="auth" target="api-gateway">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e4" style="endArrow=block;html=1;rounded=0;" edge="1" parent="1" source="api-gateway" target="lambda">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e5" style="endArrow=block;html=1;rounded=0;" edge="1" parent="1" source="lambda" target="bedrock">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e6" style="endArrow=block;html=1;rounded=0;" edge="1" parent="1" source="lambda" target="ddb">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e7" style="endArrow=block;html=1;rounded=0;" edge="1" parent="1" source="lambda" target="artifacts">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e8" style="endArrow=block;html=1;rounded=0;" edge="1" parent="1" source="bedrock" target="ssm">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e9" style="endArrow=block;html=1;rounded=0;" edge="1" parent="1" source="ddb" target="cw">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e10" style="endArrow=block;html=1;rounded=0;" edge="1" parent="1" source="artifacts" target="sns">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e11" style="endArrow=block;html=1;rounded=0;" edge="1" parent="1" source="ssm" target="gha">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e12" style="endArrow=block;html=1;rounded=0;dashed=1;" edge="1" parent="1" source="branches" target="gha">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

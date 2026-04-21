@@ -1,0 +1,52 @@
+[
+  {
+    "moduleId": "iaw-shared-auth",
+    "path": "infra/modules/shared-auth",
+    "metadataFile": "infra/modules/shared-auth/module-metadata.json"
+  },
+  {
+    "moduleId": "iaw-cognito-web-client",
+    "path": "infra/modules/cognito-web-client",
+    "metadataFile": "infra/modules/cognito-web-client/module-metadata.json"
+  },
+  {
+    "moduleId": "iaw-app-environment",
+    "path": "infra/modules/app-environment",
+    "metadataFile": "infra/modules/app-environment/module-metadata.json"
+  },
+  {
+    "moduleId": "iaw-observability-suite",
+    "path": "infra/modules/observability-suite",
+    "metadataFile": "infra/modules/observability-suite/module-metadata.json"
+  },
+  {
+    "moduleId": "iaw-submission-data",
+    "path": "infra/modules/submission-data",
+    "metadataFile": "infra/modules/submission-data/module-metadata.json"
+  },
+  {
+    "moduleId": "iaw-http-api-service",
+    "path": "infra/modules/http-api-service",
+    "metadataFile": "infra/modules/http-api-service/module-metadata.json"
+  },
+  {
+    "moduleId": "iaw-static-website",
+    "path": "infra/modules/static-website",
+    "metadataFile": "infra/modules/static-website/module-metadata.json"
+  },
+  {
+    "moduleId": "iaw-example-static-website",
+    "path": "infra/modules/example-static-website",
+    "metadataFile": "infra/modules/example-static-website/module-metadata.json"
+  },
+  {
+    "moduleId": "iaw-docs-website",
+    "path": "infra/modules/docs-website",
+    "metadataFile": "infra/modules/docs-website/module-metadata.json"
+  },
+  {
+    "moduleId": "iaw-example-website-with-api",
+    "path": "infra/modules/example-website-with-api",
+    "metadataFile": "infra/modules/example-website-with-api/module-metadata.json"
+  }
+]

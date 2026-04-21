@@ -1,0 +1,10 @@
+{
+  "moduleId": "iaw-observability-suite",
+  "label": "Observability Suite",
+  "category": "observability",
+  "usedInDeployment": true,
+  "requiredByDefault": false,
+  "capabilities": ["cloudwatch", "alarms", "dashboard", "sns", "logging"],
+  "description": "CloudWatch alarms, dashboard, and SNS notifications for application health.",
+  "documentationPath": "README.md"
+}

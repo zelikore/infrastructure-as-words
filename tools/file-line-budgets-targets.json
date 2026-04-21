@@ -1,0 +1,9 @@
+{
+  "defaultConfig": "tools/file-line-budgets-default.json",
+  "targets": [
+    {
+      "root": "."
+    }
+  ]
+}
+

@@ -1,0 +1,16 @@
+node_modules
+dist
+.next
+out
+.cache
+.playwright-cli
+.terraform
+coverage
+*.tsbuildinfo
+terraform.tfstate
+terraform.tfstate.*
+crash.log
+.DS_Store
+infra/terraform/.generated
+web/out
+infra/modules/**/.terraform.lock.hcl

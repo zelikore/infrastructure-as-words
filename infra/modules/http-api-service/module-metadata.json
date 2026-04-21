@@ -1,0 +1,17 @@
+{
+  "moduleId": "iaw-http-api-service",
+  "label": "Lambda HTTP API",
+  "category": "compute",
+  "usedInDeployment": true,
+  "requiredByDefault": false,
+  "capabilities": [
+    "lambda",
+    "apigateway",
+    "jwt-auth",
+    "custom-domain",
+    "structured-logging",
+    "ssm-runtime-config"
+  ],
+  "description": "Deploys Lambda service runtime, API routes, custom API domain, observability env wiring, and SSM-backed admin runtime config.",
+  "documentationPath": "README.md"
+}

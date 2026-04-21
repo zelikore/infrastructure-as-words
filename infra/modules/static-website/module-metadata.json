@@ -1,0 +1,10 @@
+{
+  "moduleId": "iaw-static-website",
+  "label": "Static Website Edge",
+  "category": "edge",
+  "usedInDeployment": true,
+  "requiredByDefault": false,
+  "capabilities": ["s3", "cloudfront", "route53", "acm", "spa-rewrite"],
+  "description": "Reusable static website edge stack with secure S3 origin and CloudFront.",
+  "documentationPath": "README.md"
+}

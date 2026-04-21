@@ -1,0 +1,6 @@
+tests/src/contracts.test.ts
+tests/src/infra-config.test.ts
+tests/src/api-http.test.ts
+tests/src/admin-auth.test.ts
+tests/src/observability.test.ts
+tests/src/bedrock-normalizer.test.ts

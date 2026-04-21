@@ -1,0 +1,9 @@
+{
+  "threshold": 500,
+  "thresholdsByPath": {
+    "infra/terraform": 320,
+    "web/app": 350,
+    "web/components": 350,
+    "services/api/src": 350
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "moduleId": "iaw-docs-website",
+  "label": "Docs Website",
+  "category": "delivery",
+  "usedInDeployment": false,
+  "requiredByDefault": false,
+  "capabilities": ["docs", "marketing", "static-site", "cloudfront"],
+  "description": "Opinionated static website wrapper for docs, release notes, and marketing pages.",
+  "documentationPath": "README.md"
+}
