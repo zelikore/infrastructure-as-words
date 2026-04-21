@@ -78,17 +78,6 @@ jobs:
       - name: Build deployable artifacts
         run: npm run build:all
 
-      - name: Package deployable artifacts
-        run: tar -czf deploy-assets.tgz infra/config/dist packages/contracts/dist services/api/dist web/out
-
-      - name: Upload deployable artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: deploy-assets
-          if-no-files-found: error
-          retention-days: 7
-          path: deploy-assets.tgz
-
   deploy:
     name: Deploy stacks
     runs-on: ubuntu-latest
@@ -166,22 +155,8 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Download deployable artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: deploy-assets
-          path: .
-
-      - name: Restore deployable artifacts
-        shell: bash
-        run: |
-          archive_path="$(find . -maxdepth 3 -name deploy-assets.tgz -print -quit)"
-          if [[ -z "${archive_path}" ]]; then
-            echo "Could not find deploy-assets.tgz after artifact download." >&2
-            exit 1
-          fi
-
-          tar -xzf "${archive_path}"
+      - name: Build deployable artifacts
+        run: npm run build:all
 
       - name: Deploy shared auth stack
         if: needs.build.outputs.deploy_target == 'all' || needs.build.outputs.deploy_target == 'auth' || needs.build.outputs.deploy_target == 'prod'
