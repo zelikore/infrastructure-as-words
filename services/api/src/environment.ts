@@ -20,7 +20,18 @@ const environmentSchema = z.object({
   ADMIN_EMAIL_ALLOWLIST: z.string().default(""),
   ADMIN_EMAIL_PARAMETER_NAME: z.string().default(""),
   OBSERVABILITY_DASHBOARD_NAME: z.string().default(""),
+  OBSERVABILITY_ALARM_NAMES: z
+    .string()
+    .default("")
+    .transform((value) =>
+      value
+        .split(",")
+        .map((entry) => entry.trim())
+        .filter((entry) => entry.length > 0),
+    ),
   OBSERVABILITY_ALERTS_TOPIC_ARN: z.string().default(""),
+  OBSERVABILITY_API_ID: z.string().default(""),
+  OBSERVABILITY_API_STAGE_NAME: z.string().default("$default"),
   OBSERVABILITY_LAMBDA_LOG_GROUP_NAME: z.string().default(""),
   OBSERVABILITY_API_LOG_GROUP_NAME: z.string().default(""),
   ARTIFACT_DOWNLOAD_TTL_SECONDS: z.coerce

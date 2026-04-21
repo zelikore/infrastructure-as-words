@@ -6,7 +6,7 @@ Composes the full application environment used by this repository:
 - Cognito SPA client
 - Lambda + HTTP API
 - shared-admin runtime lookup via SSM parameter metadata
-- CloudWatch alarms, dashboard, and alert routing
+- CloudWatch alarms, dashboard, alert routing, and admin observability reads
 - static SPA delivery on S3 + CloudFront
 
 Use this when a team needs a complete browser application environment with a

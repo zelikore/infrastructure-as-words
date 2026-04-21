@@ -54,6 +54,44 @@ partner rather than as a passive autocomplete tool.
   and
   [`infra/modules/cognito-web-client/cognito-web-client.tftest.hcl`](../../infra/modules/cognito-web-client/cognito-web-client.tftest.hcl)
 
+### PR review evidence
+
+The PR reviewer itself is repo-authored. Reviewers are not looking at a generic
+third-party bot. The visible PR comment is generated from:
+
+- workflow:
+  [`.github/workflows/pr-review.yml`](../../.github/workflows/pr-review.yml)
+- review entrypoint:
+  [`scripts/support/review-pull-request.ts`](../../scripts/support/review-pull-request.ts)
+- repo-owned policy:
+  [`tools/pr-review-requirements.json`](../../tools/pr-review-requirements.json)
+
+The AI review currently checks these categories:
+
+- strict TypeScript and runtime validation
+- secrets and sensitive runtime configuration
+- least-privilege IAM and safe Terraform changes
+- Terraform module quality, metadata, and tests
+- observability and operational maturity
+- submission evidence artifacts
+- regression coverage for user-visible or security-relevant changes
+
+Live PR evidence:
+
+- [Open pull requests](https://github.com/zelikore/infrastructure-as-words/pulls?q=is%3Apr+is%3Aopen)
+  should include the current example PR with the AI review comment
+- [PR #10](https://github.com/zelikore/infrastructure-as-words/pull/10)
+  shows a passing AI review comment on shared-auth config and tests
+- [PR #7](https://github.com/zelikore/infrastructure-as-words/pull/7)
+  shows a passing AI review comment on branch flow, OIDC trust, and docs
+- [PR #8](https://github.com/zelikore/infrastructure-as-words/pull/8)
+  is a closed validation PR that demonstrates the separate branch-source guard
+  failing for a non-`development` PR into `main`
+
+The preserved historical AI comments currently show pass verdicts. The review
+policy is configured to block a PR on critical findings, especially hardcoded
+secrets/runtime config and IAM changes that weaken least privilege.
+
 ## AI in the product
 
 Infrastructure as Words is itself an AI-assisted internal platform tool.

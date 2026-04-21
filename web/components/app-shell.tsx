@@ -1,9 +1,11 @@
 "use client";
 
+import { useAdminObservability } from "../lib/use-admin-observability";
 import { logout, startLogin } from "../lib/auth";
 import { useWorkbenchState } from "../lib/use-workbench-state";
 import { GovernancePage } from "./governance-page";
 import { HeroStage } from "./hero-stage";
+import { ObservabilityPage } from "./observability-page";
 import { RunLoadingPanel } from "./run-loading-panel";
 import { SignedOutGate } from "./signed-out-gate";
 import { SubmissionDetailPanel } from "./submission-detail-panel";
@@ -77,6 +79,16 @@ export function AppShell() {
         ),
       )
     : averageDurationFallbackMs;
+  const {
+    observabilitySnapshot,
+    observabilityLoading,
+    observabilityErrorMessage,
+    refreshObservability,
+  } = useAdminObservability({
+    activeView,
+    canAccessGovernance,
+    signedIn: sessionSignedIn,
+  });
 
   return (
     <main
@@ -85,9 +97,13 @@ export function AppShell() {
       <div
         className={`iaw-chrome ${sessionSignedIn ? "iaw-chromeWorkspace" : "iaw-chromeLanding"}`}
       >
-        <section className="iaw-challengeBanner" aria-label="Challenge attribution">
+        <section
+          className="iaw-challengeBanner"
+          aria-label="Challenge attribution"
+        >
           <p className="iaw-challengeBannerText">
-            Created by Elijah Faviel for the CVS team take-home coding challenge.
+            Created by Elijah Faviel for the CVS team take-home coding
+            challenge.
           </p>
           <a
             className="iaw-challengeBannerLink"
@@ -228,6 +244,15 @@ export function AppShell() {
                   saving={governanceSaving}
                   errorMessage={governanceErrorMessage}
                   onSave={handleSaveGovernance}
+                />
+              ) : null}
+
+              {activeView === "observability" && canAccessGovernance ? (
+                <ObservabilityPage
+                  snapshot={observabilitySnapshot}
+                  loading={observabilityLoading}
+                  errorMessage={observabilityErrorMessage}
+                  onRefresh={refreshObservability}
                 />
               ) : null}
             </div>

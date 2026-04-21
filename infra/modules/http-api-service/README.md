@@ -6,7 +6,8 @@ Deploys the API service runtime and public API entrypoint:
 - API Gateway HTTP API routes with Cognito JWT scopes
 - API access logs in CloudWatch
 - Runtime admin identity lookup via SSM Parameter Store
-- structured observability env wiring for dashboard and alerts
+- structured observability env wiring for dashboard, alarms, logs, and alerts
+- read-only CloudWatch, Logs, and SNS access for the admin observability view
 - API custom domain with ACM DNS validation + Route53 aliases
 
 This module expects upstream data-plane and Cognito client inputs.

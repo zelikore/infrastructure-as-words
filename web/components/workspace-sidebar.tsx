@@ -20,12 +20,12 @@ type WorkspaceSidebarProps = {
 const primaryItems = [
   {
     id: "create",
-    label: "Create"
+    label: "Create",
   },
   {
     id: "history",
-    label: "History"
-  }
+    label: "History",
+  },
 ] as const;
 
 const formatUsd = (value: number): string =>
@@ -33,7 +33,7 @@ const formatUsd = (value: number): string =>
     style: "currency",
     currency: "USD",
     minimumFractionDigits: value < 1 ? 3 : 2,
-    maximumFractionDigits: value < 1 ? 3 : 2
+    maximumFractionDigits: value < 1 ? 3 : 2,
   }).format(value);
 
 const statusLabel = (status: SubmissionStatus | undefined): string => {
@@ -63,14 +63,16 @@ export function WorkspaceSidebar({
   activeRunSummary,
   activeRunStatus,
   onNavigate,
-  onOpenRun
+  onOpenRun,
 }: WorkspaceSidebarProps) {
   return (
     <aside className="iaw-workspaceRail" aria-label="Workspace navigation">
       <div className="iaw-workspaceRailHeader">
         <div>
           <p className="iaw-sectionLabel">Workspace</p>
-          <h2 className="iaw-workspaceRailTitle">{organizationName ?? "Generation console"}</h2>
+          <h2 className="iaw-workspaceRailTitle">
+            {organizationName ?? "Generation console"}
+          </h2>
         </div>
         <p className="iaw-workspaceRailSummary">{runCount} runs tracked</p>
       </div>
@@ -123,7 +125,9 @@ export function WorkspaceSidebar({
           aria-label="Open current run"
         >
           <span className="iaw-fieldLabel">Current run</span>
-          <strong className="iaw-workspaceRailRunStatus">{statusLabel(activeRunStatus)}</strong>
+          <strong className="iaw-workspaceRailRunStatus">
+            {statusLabel(activeRunStatus)}
+          </strong>
           <span className="iaw-workspaceRailRunSummary">
             {activeRunSummary ?? "Open the latest generated result."}
           </span>
@@ -144,6 +148,19 @@ export function WorkspaceSidebar({
               }}
             >
               Governance
+            </button>
+            <button
+              type="button"
+              className={`iaw-workspaceNavButton ${
+                activeView === "observability"
+                  ? "iaw-workspaceNavButtonActive"
+                  : ""
+              }`}
+              onClick={() => {
+                onNavigate("observability");
+              }}
+            >
+              Observability
             </button>
           </div>
         </div>
