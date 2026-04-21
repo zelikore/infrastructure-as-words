@@ -13,10 +13,15 @@ data "aws_ssm_parameter" "admin_email" {
 }
 
 locals {
-  is_prod              = var.environment_name == "prod"
-  app_origin           = "https://${var.app_domain}"
-  api_origin           = "https://${var.api_domain}"
-  auth_origin          = "https://${var.auth_domain}"
+  is_prod     = var.environment_name == "prod"
+  app_origin  = "https://${var.app_domain}"
+  api_origin  = "https://${var.api_domain}"
+  auth_origin = "https://${var.auth_domain}"
+  admin_email_allowlist = [
+    for email in split(",", nonsensitive(data.aws_ssm_parameter.admin_email.value)) :
+    lower(trimspace(email))
+    if trimspace(email) != ""
+  ]
   cognito_user_pool_id = data.terraform_remote_state.shared_auth.outputs.user_pool_id
   cognito_read_scope   = data.terraform_remote_state.shared_auth.outputs.read_scope
   cognito_write_scope  = data.terraform_remote_state.shared_auth.outputs.write_scope
