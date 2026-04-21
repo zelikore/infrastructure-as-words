@@ -46,6 +46,8 @@ npm run deploy:all
 - `AGENTS.md` documents the repo-level AI agent workflow and scoped handbooks.
 - `docs/for-graders/ai-usage.md` explains how AI was used in development and in
   the product itself.
+- `docs/for-graders/release-flow.md` explains the `dev`/`prod` branch model and
+  the PR review system used for this submission.
 
 ## Environments
 
