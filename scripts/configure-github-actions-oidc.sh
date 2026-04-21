@@ -275,6 +275,8 @@ EOF
         "iam:CreateRole",
         "iam:DeleteRole",
         "iam:GetRole",
+        "iam:GetRolePolicy",
+        "iam:ListAttachedRolePolicies",
         "iam:ListRolePolicies",
         "iam:PassRole",
         "iam:PutRolePolicy",
@@ -339,6 +341,15 @@ EOF
       "Resource": "${topic_arn}"
     },
     {
+      "Sid": "SharedAdminParameterRead",
+      "Effect": "Allow",
+      "Action": [
+        "ssm:GetParameter",
+        "ssm:ListTagsForResource"
+      ],
+      "Resource": "${admin_parameter_arn}"
+    },
+    {
       "Sid": "DnsHostedZoneControl",
       "Effect": "Allow",
       "Action": [
@@ -363,11 +374,13 @@ EOF
         "acm:DeleteCertificate",
         "acm:DescribeCertificate",
         "acm:ListCertificates",
+        "acm:ListTagsForCertificate",
         "acm:RemoveTagsFromCertificate",
         "acm:RequestCertificate",
         "cloudfront:CreateCachePolicy",
         "cloudfront:CreateDistribution",
         "cloudfront:CreateFunction",
+        "cloudfront:CreateInvalidation",
         "cloudfront:CreateOriginAccessControl",
         "cloudfront:CreateResponseHeadersPolicy",
         "cloudfront:DeleteCachePolicy",
@@ -381,6 +394,7 @@ EOF
         "cloudfront:GetDistribution",
         "cloudfront:GetDistributionConfig",
         "cloudfront:GetFunction",
+        "cloudfront:GetInvalidation",
         "cloudfront:GetOriginAccessControl",
         "cloudfront:GetOriginAccessControlConfig",
         "cloudfront:GetResponseHeadersPolicy",
@@ -389,6 +403,7 @@ EOF
         "cloudfront:ListDistributions",
         "cloudfront:ListDistributionsByOriginRequestPolicyId",
         "cloudfront:ListFunctions",
+        "cloudfront:ListInvalidations",
         "cloudfront:ListOriginAccessControls",
         "cloudfront:ListResponseHeadersPolicies",
         "cloudfront:ListTagsForResource",
