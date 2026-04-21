@@ -8,6 +8,15 @@ locals {
   cognito_read_scope          = "${local.cognito_resource_identifier}/read"
   cognito_write_scope         = "${local.cognito_resource_identifier}/write"
   cognito_user_pool_issuer    = "https://cognito-idp.${var.aws_region}.amazonaws.com/${aws_cognito_user_pool.main.id}"
+  admin_email_allowlist = [
+    for email in split(",", var.admin_email) :
+    lower(trimspace(email))
+    if trimspace(email) != ""
+  ]
+  admin_seed_email = try(
+    local.admin_email_allowlist[0],
+    lower(trimspace(var.admin_email)),
+  )
   shared_auth_tags = merge(var.tags, {
     Module = "shared-auth"
   })
@@ -84,7 +93,7 @@ resource "aws_ssm_parameter" "admin_email" {
   name        = var.admin_email_parameter_name
   description = "Infrastructure as Words admin email"
   type        = "String"
-  value       = lower(var.admin_email)
+  value       = join(",", local.admin_email_allowlist)
   tags        = local.shared_auth_tags
 }
 
@@ -106,10 +115,10 @@ resource "aws_cognito_resource_server" "main" {
 
 resource "aws_cognito_user" "admin" {
   user_pool_id = aws_cognito_user_pool.main.id
-  username     = lower(var.admin_email)
+  username     = local.admin_seed_email
 
   attributes = {
-    email          = lower(var.admin_email)
+    email          = local.admin_seed_email
     email_verified = "true"
   }
 
