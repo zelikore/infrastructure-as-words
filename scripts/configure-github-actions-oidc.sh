@@ -162,6 +162,7 @@ write_deploy_permissions_policy() {
         "cognito-idp:DeleteUserPool",
         "cognito-idp:DeleteUserPoolClient",
         "cognito-idp:DeleteUserPoolDomain",
+        "cognito-idp:DescribeResourceServer",
         "cognito-idp:DescribeUserPool",
         "cognito-idp:DescribeUserPoolClient",
         "cognito-idp:DescribeUserPoolDomain",
@@ -187,6 +188,7 @@ write_deploy_permissions_policy() {
         "ssm:AddTagsToResource",
         "ssm:DeleteParameter",
         "ssm:GetParameter",
+        "ssm:GetParameters",
         "ssm:ListTagsForResource",
         "ssm:PutParameter",
         "ssm:RemoveTagsFromResource"
@@ -346,6 +348,7 @@ EOF
       "Effect": "Allow",
       "Action": [
         "ssm:GetParameter",
+        "ssm:GetParameters",
         "ssm:ListTagsForResource"
       ],
       "Resource": "${admin_parameter_arn}"
