@@ -3,9 +3,10 @@
 set -euo pipefail
 
 readonly OIDC_URL="https://token.actions.githubusercontent.com"
-readonly OIDC_THUMBPRINT="6938fd4d98bab03faadb97b34396831e3780aea1"
 readonly DEFAULT_DEPLOY_ROLE_NAME="GitHubActionsInfrastructureAsWordsDeploy"
 readonly DEFAULT_REVIEW_ROLE_NAME="GitHubActionsInfrastructureAsWordsReview"
+readonly DEFAULT_AWS_REGION="us-west-2"
+readonly DEFAULT_HOSTED_ZONE_ID="Z04489831QPP59H15P0H0"
 
 repo_slug_from_git() {
   git remote get-url origin \
@@ -33,7 +34,6 @@ ensure_oidc_provider() {
       aws iam create-open-id-connect-provider \
         --url "${OIDC_URL}" \
         --client-id-list sts.amazonaws.com \
-        --thumbprint-list "${OIDC_THUMBPRINT}" \
         --query 'OpenIDConnectProviderArn' \
         --output text
     )"
@@ -59,9 +59,7 @@ write_deploy_trust_policy() {
       "Action": "sts:AssumeRoleWithWebIdentity",
       "Condition": {
         "StringEquals": {
-          "token.actions.githubusercontent.com:aud": "sts.amazonaws.com"
-        },
-        "StringLike": {
+          "token.actions.githubusercontent.com:aud": "sts.amazonaws.com",
           "token.actions.githubusercontent.com:sub": [
             "repo:${repo_slug}:ref:refs/heads/dev",
             "repo:${repo_slug}:ref:refs/heads/prod"
@@ -91,9 +89,7 @@ write_review_trust_policy() {
       "Action": "sts:AssumeRoleWithWebIdentity",
       "Condition": {
         "StringEquals": {
-          "token.actions.githubusercontent.com:aud": "sts.amazonaws.com"
-        },
-        "StringLike": {
+          "token.actions.githubusercontent.com:aud": "sts.amazonaws.com",
           "token.actions.githubusercontent.com:sub": "repo:${repo_slug}:pull_request"
         }
       }
@@ -105,35 +101,308 @@ EOF
 
 write_deploy_permissions_policy() {
   local path="$1"
+  local account_id="$2"
+  local aws_region="$3"
+  local hosted_zone_id="$4"
 
-  cat > "${path}" <<'EOF'
+  local state_bucket="infrastructure-as-words-terraform-state-${account_id}"
+  local web_bucket_dev="infrastructure-as-words-web-dev-${account_id}"
+  local web_bucket_prod="infrastructure-as-words-web-prod-${account_id}"
+  local artifacts_bucket_dev="infrastructure-as-words-artifacts-dev-${account_id}"
+  local artifacts_bucket_prod="infrastructure-as-words-artifacts-prod-${account_id}"
+  local lock_table="infrastructure-as-words-terraform-locks"
+  local submission_table_dev="infrastructure-as-words-submissions-dev"
+  local submission_table_prod="infrastructure-as-words-submissions-prod"
+  local lambda_dev="infrastructure-as-words-api-dev"
+  local lambda_prod="infrastructure-as-words-api-prod"
+  local lambda_role_dev="${lambda_dev}-role"
+  local lambda_role_prod="${lambda_prod}-role"
+  local admin_parameter_arn="arn:aws:ssm:${aws_region}:${account_id}:parameter/infrastructure-as-words/admin-email"
+  local dev_dashboard_arn="arn:aws:cloudwatch::${account_id}:dashboard/infrastructure-as-words-dev-observability"
+  local prod_dashboard_arn="arn:aws:cloudwatch::${account_id}:dashboard/infrastructure-as-words-prod-observability"
+  local dev_alarm_arn="arn:aws:cloudwatch:${aws_region}:${account_id}:alarm:infrastructure-as-words-dev-*"
+  local prod_alarm_arn="arn:aws:cloudwatch:${aws_region}:${account_id}:alarm:infrastructure-as-words-prod-*"
+  local dev_topic_arn="arn:aws:sns:${aws_region}:${account_id}:infrastructure-as-words-dev-alerts"
+  local prod_topic_arn="arn:aws:sns:${aws_region}:${account_id}:infrastructure-as-words-prod-alerts"
+  local route53_zone_arn="arn:aws:route53:::hostedzone/${hosted_zone_id}"
+
+  # Exact ARNs are used for mutable data and identity resources. Control-plane
+  # services with coarse IAM support are constrained with explicit action lists.
+
+  cat > "${path}" <<EOF
 {
   "Version": "2012-10-17",
   "Statement": [
     {
-      "Sid": "TerraformManagedServiceAccess",
+      "Sid": "ReadCallerIdentity",
+      "Effect": "Allow",
+      "Action": "sts:GetCallerIdentity",
+      "Resource": "*"
+    },
+    {
+      "Sid": "BucketDiscovery",
       "Effect": "Allow",
       "Action": [
-        "acm:*",
-        "apigateway:*",
-        "cloudfront:*",
-        "cloudwatch:*",
-        "cognito-idp:*",
-        "dynamodb:*",
-        "iam:*",
-        "lambda:*",
-        "logs:*",
-        "route53:*",
-        "s3:*",
-        "sns:*",
-        "ssm:*"
+        "s3:ListAllMyBuckets",
+        "s3:GetBucketLocation"
       ],
       "Resource": "*"
     },
     {
-      "Sid": "ReadCallerIdentity",
+      "Sid": "TerraformStateAndApplicationBuckets",
       "Effect": "Allow",
-      "Action": "sts:GetCallerIdentity",
+      "Action": "s3:*",
+      "Resource": [
+        "arn:aws:s3:::${state_bucket}",
+        "arn:aws:s3:::${state_bucket}/*",
+        "arn:aws:s3:::${web_bucket_dev}",
+        "arn:aws:s3:::${web_bucket_dev}/*",
+        "arn:aws:s3:::${web_bucket_prod}",
+        "arn:aws:s3:::${web_bucket_prod}/*",
+        "arn:aws:s3:::${artifacts_bucket_dev}",
+        "arn:aws:s3:::${artifacts_bucket_dev}/*",
+        "arn:aws:s3:::${artifacts_bucket_prod}",
+        "arn:aws:s3:::${artifacts_bucket_prod}/*"
+      ]
+    },
+    {
+      "Sid": "TerraformLockAndSubmissionTables",
+      "Effect": "Allow",
+      "Action": "dynamodb:*",
+      "Resource": [
+        "arn:aws:dynamodb:${aws_region}:${account_id}:table/${lock_table}",
+        "arn:aws:dynamodb:${aws_region}:${account_id}:table/${submission_table_dev}",
+        "arn:aws:dynamodb:${aws_region}:${account_id}:table/${submission_table_prod}"
+      ]
+    },
+    {
+      "Sid": "DynamoTableDiscovery",
+      "Effect": "Allow",
+      "Action": [
+        "dynamodb:DescribeLimits",
+        "dynamodb:ListTables"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "LambdaFunctions",
+      "Effect": "Allow",
+      "Action": "lambda:*",
+      "Resource": [
+        "arn:aws:lambda:${aws_region}:${account_id}:function:${lambda_dev}",
+        "arn:aws:lambda:${aws_region}:${account_id}:function:${lambda_dev}:*",
+        "arn:aws:lambda:${aws_region}:${account_id}:function:${lambda_prod}",
+        "arn:aws:lambda:${aws_region}:${account_id}:function:${lambda_prod}:*"
+      ]
+    },
+    {
+      "Sid": "ManageLambdaExecutionRolesOnly",
+      "Effect": "Allow",
+      "Action": [
+        "iam:CreateRole",
+        "iam:DeleteRole",
+        "iam:GetRole",
+        "iam:ListRolePolicies",
+        "iam:PassRole",
+        "iam:PutRolePolicy",
+        "iam:DeleteRolePolicy",
+        "iam:TagRole",
+        "iam:UntagRole",
+        "iam:UpdateAssumeRolePolicy"
+      ],
+      "Resource": [
+        "arn:aws:iam::${account_id}:role/${lambda_role_dev}",
+        "arn:aws:iam::${account_id}:role/${lambda_role_prod}"
+      ]
+    },
+    {
+      "Sid": "ManageProjectLogGroups",
+      "Effect": "Allow",
+      "Action": "logs:*",
+      "Resource": [
+        "arn:aws:logs:${aws_region}:${account_id}:log-group:/aws/lambda/${lambda_dev}",
+        "arn:aws:logs:${aws_region}:${account_id}:log-group:/aws/lambda/${lambda_dev}:*",
+        "arn:aws:logs:${aws_region}:${account_id}:log-group:/aws/lambda/${lambda_prod}",
+        "arn:aws:logs:${aws_region}:${account_id}:log-group:/aws/lambda/${lambda_prod}:*",
+        "arn:aws:logs:${aws_region}:${account_id}:log-group:/aws/apigateway/dev-infrastructure-as-words",
+        "arn:aws:logs:${aws_region}:${account_id}:log-group:/aws/apigateway/dev-infrastructure-as-words:*",
+        "arn:aws:logs:${aws_region}:${account_id}:log-group:/aws/apigateway/prod-infrastructure-as-words",
+        "arn:aws:logs:${aws_region}:${account_id}:log-group:/aws/apigateway/prod-infrastructure-as-words:*"
+      ]
+    },
+    {
+      "Sid": "LogGroupDiscovery",
+      "Effect": "Allow",
+      "Action": [
+        "logs:DescribeLogGroups",
+        "logs:DescribeResourcePolicies"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "ObservabilityDashboardsAndAlarms",
+      "Effect": "Allow",
+      "Action": [
+        "cloudwatch:DeleteAlarms",
+        "cloudwatch:DeleteDashboards",
+        "cloudwatch:GetDashboard",
+        "cloudwatch:ListTagsForResource",
+        "cloudwatch:PutDashboard",
+        "cloudwatch:PutMetricAlarm",
+        "cloudwatch:TagResource",
+        "cloudwatch:UntagResource"
+      ],
+      "Resource": [
+        "${dev_dashboard_arn}",
+        "${prod_dashboard_arn}",
+        "${dev_alarm_arn}",
+        "${prod_alarm_arn}"
+      ]
+    },
+    {
+      "Sid": "CloudWatchAlarmDiscovery",
+      "Effect": "Allow",
+      "Action": [
+        "cloudwatch:DescribeAlarms",
+        "cloudwatch:GetMetricData"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "NotificationsAndAdminParameter",
+      "Effect": "Allow",
+      "Action": "sns:*",
+      "Resource": [
+        "${dev_topic_arn}",
+        "${prod_topic_arn}"
+      ]
+    },
+    {
+      "Sid": "SsmAdminParameter",
+      "Effect": "Allow",
+      "Action": [
+        "ssm:AddTagsToResource",
+        "ssm:DeleteParameter",
+        "ssm:GetParameter",
+        "ssm:ListTagsForResource",
+        "ssm:PutParameter",
+        "ssm:RemoveTagsFromResource"
+      ],
+      "Resource": "${admin_parameter_arn}"
+    },
+    {
+      "Sid": "DnsHostedZoneControl",
+      "Effect": "Allow",
+      "Action": [
+        "route53:ChangeResourceRecordSets",
+        "route53:ChangeTagsForResource",
+        "route53:GetChange",
+        "route53:GetHostedZone",
+        "route53:ListHostedZonesByName",
+        "route53:ListResourceRecordSets",
+        "route53:ListTagsForResource"
+      ],
+      "Resource": [
+        "${route53_zone_arn}",
+        "arn:aws:route53:::change/*"
+      ]
+    },
+    {
+      "Sid": "CertificateAndEdgeControlPlane",
+      "Effect": "Allow",
+      "Action": [
+        "acm:AddTagsToCertificate",
+        "acm:DeleteCertificate",
+        "acm:DescribeCertificate",
+        "acm:ListCertificates",
+        "acm:RemoveTagsFromCertificate",
+        "acm:RequestCertificate",
+        "cloudfront:CreateCachePolicy",
+        "cloudfront:CreateDistribution",
+        "cloudfront:CreateFunction",
+        "cloudfront:CreateOriginAccessControl",
+        "cloudfront:CreateResponseHeadersPolicy",
+        "cloudfront:DeleteCachePolicy",
+        "cloudfront:DeleteDistribution",
+        "cloudfront:DeleteFunction",
+        "cloudfront:DeleteOriginAccessControl",
+        "cloudfront:DeleteResponseHeadersPolicy",
+        "cloudfront:DescribeFunction",
+        "cloudfront:GetCachePolicy",
+        "cloudfront:GetCachePolicyConfig",
+        "cloudfront:GetDistribution",
+        "cloudfront:GetDistributionConfig",
+        "cloudfront:GetFunction",
+        "cloudfront:GetOriginAccessControl",
+        "cloudfront:GetOriginAccessControlConfig",
+        "cloudfront:GetResponseHeadersPolicy",
+        "cloudfront:GetResponseHeadersPolicyConfig",
+        "cloudfront:ListCachePolicies",
+        "cloudfront:ListDistributions",
+        "cloudfront:ListDistributionsByOriginRequestPolicyId",
+        "cloudfront:ListFunctions",
+        "cloudfront:ListOriginAccessControls",
+        "cloudfront:ListResponseHeadersPolicies",
+        "cloudfront:ListTagsForResource",
+        "cloudfront:PublishFunction",
+        "cloudfront:TagResource",
+        "cloudfront:TestFunction",
+        "cloudfront:UntagResource",
+        "cloudfront:UpdateCachePolicy",
+        "cloudfront:UpdateDistribution",
+        "cloudfront:UpdateFunction",
+        "cloudfront:UpdateOriginAccessControl",
+        "cloudfront:UpdateResponseHeadersPolicy"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "HttpApiControlPlane",
+      "Effect": "Allow",
+      "Action": [
+        "apigateway:DELETE",
+        "apigateway:GET",
+        "apigateway:PATCH",
+        "apigateway:POST",
+        "apigateway:PUT",
+        "apigateway:TAG",
+        "apigateway:UNTAG"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "CognitoControlPlane",
+      "Effect": "Allow",
+      "Action": [
+        "cognito-idp:AdminCreateUser",
+        "cognito-idp:AdminDeleteUser",
+        "cognito-idp:AdminGetUser",
+        "cognito-idp:AdminResetUserPassword",
+        "cognito-idp:AdminSetUserPassword",
+        "cognito-idp:AdminUpdateUserAttributes",
+        "cognito-idp:CreateResourceServer",
+        "cognito-idp:CreateUserPool",
+        "cognito-idp:CreateUserPoolClient",
+        "cognito-idp:CreateUserPoolDomain",
+        "cognito-idp:DeleteResourceServer",
+        "cognito-idp:DeleteUserPool",
+        "cognito-idp:DeleteUserPoolClient",
+        "cognito-idp:DeleteUserPoolDomain",
+        "cognito-idp:DescribeUserPool",
+        "cognito-idp:DescribeUserPoolClient",
+        "cognito-idp:DescribeUserPoolDomain",
+        "cognito-idp:GetResourceServer",
+        "cognito-idp:ListResourceServers",
+        "cognito-idp:ListTagsForResource",
+        "cognito-idp:ListUserPoolClients",
+        "cognito-idp:ListUserPools",
+        "cognito-idp:ListUsers",
+        "cognito-idp:TagResource",
+        "cognito-idp:UntagResource",
+        "cognito-idp:UpdateResourceServer",
+        "cognito-idp:UpdateUserPool",
+        "cognito-idp:UpdateUserPoolClient"
+      ],
       "Resource": "*"
     }
   ]
@@ -144,7 +413,7 @@ EOF
 write_review_permissions_policy() {
   local path="$1"
 
-  cat > "${path}" <<'EOF'
+  cat > "${path}" <<EOF
 {
   "Version": "2012-10-17",
   "Statement": [
@@ -198,6 +467,9 @@ main() {
   local repo_slug="${REPO_SLUG:-$(repo_slug_from_git)}"
   local deploy_role_name="${DEPLOY_ROLE_NAME:-${DEFAULT_DEPLOY_ROLE_NAME}}"
   local review_role_name="${REVIEW_ROLE_NAME:-${DEFAULT_REVIEW_ROLE_NAME}}"
+  local aws_region="${AWS_REGION:-${DEFAULT_AWS_REGION}}"
+  local hosted_zone_id="${HOSTED_ZONE_ID:-${DEFAULT_HOSTED_ZONE_ID}}"
+  local account_id
   local temp_dir
   local provider_arn
   local deploy_role_arn
@@ -206,11 +478,12 @@ main() {
   temp_dir="$(mktemp -d)"
   trap "rm -rf '${temp_dir}'" EXIT
 
+  account_id="$(aws sts get-caller-identity --query 'Account' --output text)"
   provider_arn="$(ensure_oidc_provider)"
 
   write_deploy_trust_policy "${temp_dir}/deploy-trust.json" "${provider_arn}" "${repo_slug}"
   write_review_trust_policy "${temp_dir}/review-trust.json" "${provider_arn}" "${repo_slug}"
-  write_deploy_permissions_policy "${temp_dir}/deploy-policy.json"
+  write_deploy_permissions_policy "${temp_dir}/deploy-policy.json" "${account_id}" "${aws_region}" "${hosted_zone_id}"
   write_review_permissions_policy "${temp_dir}/review-policy.json"
 
   upsert_role "${deploy_role_name}" "${temp_dir}/deploy-trust.json"
