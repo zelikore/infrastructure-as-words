@@ -5,6 +5,7 @@ ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 MODULES=(
   "${ROOT_DIR}/infra/modules/submission-data"
   "${ROOT_DIR}/infra/modules/cognito-web-client"
+  "${ROOT_DIR}/infra/modules/shared-auth"
 )
 
 cleanup() {

@@ -12,9 +12,13 @@ LOCK_TABLE="infrastructure-as-words-terraform-locks"
 AWS_REGION="us-west-2"
 ADMIN_EMAIL_PARAMETER_NAME="/infrastructure-as-words/admin-email"
 
+normalize_admin_email() {
+  printf '%s' "$1" | tr '[:upper:]' '[:lower:]'
+}
+
 resolve_admin_email() {
   if [[ -n "${IAW_ADMIN_EMAIL:-}" ]]; then
-    export IAW_ADMIN_EMAIL="${IAW_ADMIN_EMAIL,,}"
+    export IAW_ADMIN_EMAIL="$(normalize_admin_email "${IAW_ADMIN_EMAIL}")"
     return
   fi
 
@@ -28,7 +32,7 @@ resolve_admin_email() {
   )"
 
   if [[ -n "${current_admin_email}" && "${current_admin_email}" != "None" ]]; then
-    export IAW_ADMIN_EMAIL="${current_admin_email,,}"
+    export IAW_ADMIN_EMAIL="$(normalize_admin_email "${current_admin_email}")"
     return
   fi
 
