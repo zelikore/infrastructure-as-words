@@ -275,6 +275,7 @@ EOF
         "iam:CreateRole",
         "iam:DeleteRole",
         "iam:GetRole",
+        "iam:GetRolePolicy",
         "iam:ListRolePolicies",
         "iam:PassRole",
         "iam:PutRolePolicy",
@@ -339,6 +340,15 @@ EOF
       "Resource": "${topic_arn}"
     },
     {
+      "Sid": "SharedAdminParameterRead",
+      "Effect": "Allow",
+      "Action": [
+        "ssm:GetParameter",
+        "ssm:ListTagsForResource"
+      ],
+      "Resource": "${admin_parameter_arn}"
+    },
+    {
       "Sid": "DnsHostedZoneControl",
       "Effect": "Allow",
       "Action": [
@@ -363,6 +373,7 @@ EOF
         "acm:DeleteCertificate",
         "acm:DescribeCertificate",
         "acm:ListCertificates",
+        "acm:ListTagsForCertificate",
         "acm:RemoveTagsFromCertificate",
         "acm:RequestCertificate",
         "cloudfront:CreateCachePolicy",
