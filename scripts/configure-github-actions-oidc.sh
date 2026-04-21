@@ -166,6 +166,7 @@ write_deploy_permissions_policy() {
         "cognito-idp:DescribeUserPoolClient",
         "cognito-idp:DescribeUserPoolDomain",
         "cognito-idp:GetResourceServer",
+        "cognito-idp:GetUserPoolMfaConfig",
         "cognito-idp:ListResourceServers",
         "cognito-idp:ListTagsForResource",
         "cognito-idp:ListUserPoolClients",
@@ -348,6 +349,14 @@ EOF
         "ssm:ListTagsForResource"
       ],
       "Resource": "${admin_parameter_arn}"
+    },
+    {
+      "Sid": "SsmParameterDiscovery",
+      "Effect": "Allow",
+      "Action": [
+        "ssm:DescribeParameters"
+      ],
+      "Resource": "*"
     },
     {
       "Sid": "DnsHostedZoneControl",
