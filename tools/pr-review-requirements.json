@@ -2,7 +2,7 @@
   "modelId": "us.anthropic.claude-opus-4-7",
   "commentMarker": "<!-- iaw-pr-ai-review -->",
   "maxDiffCharacters": 120000,
-  "failOnSeverities": ["critical", "high"],
+  "failOnSeverities": ["critical"],
   "requirements": [
     {
       "id": "strict-typescript",

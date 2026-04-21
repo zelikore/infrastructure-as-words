@@ -82,15 +82,15 @@ npm run deploy:all
 
 - Run `./scripts/configure-github-actions-oidc.sh` once from a workstation that
   has AWS and GitHub CLI access. It creates or updates the GitHub OIDC provider,
-  the deploy/review IAM roles, and the repository variables the workflows use.
+  the branch-specific deploy/review IAM roles, and the repository variables the
+  workflows use.
 - Configure GitHub Actions to use AWS OIDC and set the repository or
-  organization variable `AWS_DEPLOY_ROLE_ARN`.
-- For AI PR review, you can optionally set `AWS_REVIEW_ROLE_ARN`; otherwise the
-  review workflow falls back to `AWS_DEPLOY_ROLE_ARN`.
+  organization variables `AWS_DEPLOY_ROLE_ARN_DEV`,
+  `AWS_DEPLOY_ROLE_ARN_PROD`, and `AWS_REVIEW_ROLE_ARN`.
 - The deploy role must trust
   `arn:aws:iam::<account-id>:oidc-provider/token.actions.githubusercontent.com`
-  and allow `sts:AssumeRoleWithWebIdentity` for this repository's `dev` and
-  `prod` branches.
+  and allow `sts:AssumeRoleWithWebIdentity` for the exact branch and workflow
+  file that will use it.
 - The deploy role needs Terraform apply access to the services managed by this
   repo: ACM, API Gateway, CloudFront, Cognito, DynamoDB, IAM, Lambda, Route53,
   S3, and STS.
