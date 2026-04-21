@@ -10,7 +10,9 @@
       .section { font: 700 13px "SF Pro Text", "Inter", sans-serif; fill: #35526c; letter-spacing: .16em; text-transform: uppercase; }
       .label { font: 700 22px "SF Pro Display", "Inter", sans-serif; fill: #10253a; }
       .body { font: 500 14px "SF Pro Text", "Inter", sans-serif; fill: #4d6175; }
+      .bodySmall { font: 500 13px "SF Pro Text", "Inter", sans-serif; fill: #4d6175; }
       .note { font: 600 14px "SF Pro Text", "Inter", sans-serif; fill: #27435f; }
+      .noteSmall { font: 600 13px "SF Pro Text", "Inter", sans-serif; fill: #27435f; }
       .line { stroke: #3e5e79; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
       .dash { stroke-dasharray: 9 9; }
     </style>
@@ -43,9 +45,10 @@
 
   <rect x="80" y="660" width="244" height="174" rx="28" fill="#F5ECFF" stroke="#8D79C0"/>
   <text x="108" y="704" class="label">What gets checked</text>
-  <text x="108" y="734" class="body">Typed ESLint, repo rules, import contracts,</text>
-  <text x="108" y="758" class="body">file budgets, Terraform validate, and</text>
-  <text x="108" y="782" class="body">terraform test for committed modules.</text>
+  <text x="108" y="734" class="bodySmall">Typed ESLint, repo rules,</text>
+  <text x="108" y="756" class="bodySmall">import contracts, file budgets,</text>
+  <text x="108" y="778" class="bodySmall">Terraform validate, and</text>
+  <text x="108" y="800" class="bodySmall">terraform test for modules.</text>
 
   <rect x="400" y="186" width="360" height="736" rx="32" fill="#FAFBFC" stroke="#D6DCE3"/>
   <text x="430" y="232" class="section">GitHub Flow</text>
@@ -87,7 +90,7 @@
   <text x="870" y="706" class="body">Creates the GitHub OIDC provider, the dev,</text>
   <text x="870" y="730" class="body">prod, and PR review roles, plus the repo</text>
   <text x="870" y="754" class="body">variables consumed by Actions.</text>
-  <text x="870" y="784" class="note">scripts/configure-github-actions-oidc.sh</text>
+  <text x="870" y="784" class="noteSmall">scripts/configure-github-actions-oidc.sh</text>
 
   <rect x="1230" y="186" width="318" height="736" rx="32" fill="#FCFBF8" stroke="#D9D1C5"/>
   <text x="1260" y="232" class="section">AWS Targets</text>
@@ -102,12 +105,13 @@
   <text x="1290" y="518" class="body">Trusted only for the PR review</text>
   <text x="1290" y="542" class="body">workflow on pull requests.</text>
 
-  <rect x="1260" y="620" width="258" height="162" rx="28" fill="#F3ECFF" stroke="#8D79C0"/>
-  <text x="1290" y="664" class="label">Prod role + shared auth + prod stack</text>
-  <text x="1290" y="694" class="body">Trusted only for the main branch</text>
-  <text x="1290" y="718" class="body">deploy workflow.</text>
-  <text x="1290" y="748" class="body">This keeps dev and prod access separate</text>
-  <text x="1290" y="772" class="body">without storing AWS keys in GitHub.</text>
+  <rect x="1260" y="620" width="258" height="184" rx="28" fill="#F3ECFF" stroke="#8D79C0"/>
+  <text x="1290" y="660" class="label">Prod role + shared auth</text>
+  <text x="1290" y="688" class="label">+ prod stack</text>
+  <text x="1290" y="720" class="bodySmall">Trusted only for the main branch</text>
+  <text x="1290" y="742" class="bodySmall">deploy workflow.</text>
+  <text x="1290" y="772" class="bodySmall">This keeps dev and prod access separate</text>
+  <text x="1290" y="794" class="bodySmall">without storing AWS keys in GitHub.</text>
 
   <path d="M324 530 H430" class="line" marker-end="url(#arrow)"/>
   <path d="M580 390 V444" class="line" marker-end="url(#arrow)"/>
@@ -120,5 +124,5 @@
   <path d="M1152 722 H1260" class="line" marker-end="url(#arrow)"/>
 
   <rect x="430" y="838" width="1088" height="50" rx="25" fill="#FFFFFF" opacity="0.9"/>
-  <text x="464" y="870" class="note">Custom PR agent: scripts/support/review-pull-request.ts • Review policy: tools/pr-review-requirements.json • OIDC keeps AWS access short-lived and workflow-scoped.</text>
+  <text x="464" y="870" class="noteSmall">Custom PR agent: scripts/support/review-pull-request.ts • Review policy: tools/pr-review-requirements.json • OIDC keeps AWS access short-lived and workflow-scoped.</text>
 </svg>

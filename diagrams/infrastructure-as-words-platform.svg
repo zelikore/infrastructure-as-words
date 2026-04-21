@@ -10,7 +10,9 @@
       .section { font: 700 13px "SF Pro Text", "Inter", sans-serif; fill: #35526c; letter-spacing: .16em; text-transform: uppercase; }
       .label { font: 700 22px "SF Pro Display", "Inter", sans-serif; fill: #10253a; }
       .body { font: 500 14px "SF Pro Text", "Inter", sans-serif; fill: #4d6175; }
+      .bodySmall { font: 500 13px "SF Pro Text", "Inter", sans-serif; fill: #4d6175; }
       .note { font: 600 14px "SF Pro Text", "Inter", sans-serif; fill: #27435f; }
+      .noteSmall { font: 600 13px "SF Pro Text", "Inter", sans-serif; fill: #27435f; }
       .line { stroke: #3e5e79; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
       .dash { stroke-dasharray: 9 9; }
     </style>
@@ -38,10 +40,12 @@
   <text x="108" y="494" class="body">Immutable static Next.js export.</text>
   <text x="108" y="518" class="body">Served at the dev and prod app domains.</text>
 
-  <rect x="80" y="588" width="252" height="122" rx="28" fill="#F7EEDC" stroke="#BF9A57"/>
-  <text x="108" y="632" class="label">Shared Cognito Hosted UI</text>
-  <text x="108" y="662" class="body">One hosted auth domain for both environments.</text>
-  <text x="108" y="688" class="note">auth.infrastructure-as-words.com</text>
+  <rect x="80" y="588" width="252" height="128" rx="28" fill="#F7EEDC" stroke="#BF9A57"/>
+  <text x="108" y="626" class="label">Shared Cognito</text>
+  <text x="108" y="654" class="label">Hosted UI</text>
+  <text x="108" y="684" class="bodySmall">One hosted auth domain</text>
+  <text x="108" y="706" class="bodySmall">for both environments.</text>
+  <text x="108" y="730" class="noteSmall">auth.infrastructure-as-words.com</text>
 
   <rect x="80" y="764" width="252" height="118" rx="28" fill="#EEE8FB" stroke="#8D79C0"/>
   <text x="108" y="808" class="label">User flow</text>
@@ -84,33 +88,39 @@
   <text x="1024" y="500" class="body">Terraform zip archives.</text>
   <text x="1024" y="524" class="body">Presigned download links.</text>
 
-  <rect x="998" y="588" width="220" height="110" rx="26" fill="#FAEFE8" stroke="#C88F6A"/>
-  <text x="1024" y="632" class="label">SSM Parameter Store</text>
-  <text x="1024" y="662" class="body">Admin email and sensitive runtime config.</text>
-  <text x="1024" y="686" class="body">Kept outside source control.</text>
+  <rect x="998" y="588" width="220" height="126" rx="26" fill="#FAEFE8" stroke="#C88F6A"/>
+  <text x="1024" y="626" class="label">SSM Parameter</text>
+  <text x="1024" y="654" class="label">Store</text>
+  <text x="1024" y="686" class="bodySmall">Admin email and sensitive</text>
+  <text x="1024" y="708" class="bodySmall">runtime config.</text>
+  <text x="1024" y="730" class="bodySmall">Kept outside source control.</text>
 
-  <rect x="998" y="750" width="220" height="110" rx="26" fill="#F0ECFF" stroke="#8D79C0"/>
+  <rect x="998" y="750" width="220" height="132" rx="26" fill="#F0ECFF" stroke="#8D79C0"/>
   <text x="1024" y="794" class="label">Module catalog</text>
-  <text x="1024" y="824" class="body">Terraform module metadata and docs.</text>
-  <text x="1024" y="848" class="body">Reused for governance and prompting.</text>
+  <text x="1024" y="824" class="bodySmall">Terraform module metadata</text>
+  <text x="1024" y="846" class="bodySmall">and docs reused for</text>
+  <text x="1024" y="868" class="bodySmall">governance and prompting.</text>
 
   <rect x="1296" y="182" width="252" height="738" rx="32" fill="#FBFCFE" stroke="#D6DCE3"/>
   <text x="1324" y="228" class="section">Observability</text>
 
-  <rect x="1324" y="258" width="196" height="128" rx="26" fill="#ECECEC" stroke="#818181"/>
+  <rect x="1324" y="258" width="196" height="136" rx="26" fill="#ECECEC" stroke="#818181"/>
   <text x="1348" y="302" class="label">CloudWatch</text>
-  <text x="1348" y="332" class="body">Structured logs and API access logs.</text>
-  <text x="1348" y="356" class="body">Alarms and dashboards for the app.</text>
+  <text x="1348" y="332" class="bodySmall">Structured logs, Lambda logs,</text>
+  <text x="1348" y="354" class="bodySmall">and API access logs.</text>
+  <text x="1348" y="376" class="bodySmall">Alarms and dashboards for the app.</text>
 
-  <rect x="1324" y="444" width="196" height="112" rx="26" fill="#F3ECFF" stroke="#8D79C0"/>
+  <rect x="1324" y="444" width="196" height="118" rx="26" fill="#F3ECFF" stroke="#8D79C0"/>
   <text x="1348" y="488" class="label">SNS alerts</text>
-  <text x="1348" y="518" class="body">Environment notifications for key alarms.</text>
+  <text x="1348" y="518" class="bodySmall">Environment notifications</text>
+  <text x="1348" y="540" class="bodySmall">for key alarms.</text>
 
-  <rect x="1324" y="614" width="196" height="174" rx="26" fill="#EEF3FF" stroke="#719FD4"/>
+  <rect x="1324" y="614" width="196" height="188" rx="26" fill="#EEF3FF" stroke="#719FD4"/>
   <text x="1348" y="658" class="label">Admin visibility</text>
-  <text x="1348" y="688" class="body">The admin page links to the dashboard,</text>
-  <text x="1348" y="712" class="body">alarms, log groups, and notifications</text>
-  <text x="1348" y="736" class="body">in the AWS console.</text>
+  <text x="1348" y="688" class="bodySmall">The admin page links to</text>
+  <text x="1348" y="710" class="bodySmall">dashboards, alarms, logs,</text>
+  <text x="1348" y="732" class="bodySmall">and notifications in</text>
+  <text x="1348" y="754" class="bodySmall">the AWS console.</text>
 
   <path d="M332 313 H438" class="line" marker-end="url(#arrow)"/>
   <path d="M332 478 H438" class="line" marker-end="url(#arrow)"/>
@@ -119,11 +129,11 @@
   <path d="M892 498 H998" class="line" marker-end="url(#arrow)"/>
   <path d="M892 694 H998" class="line" marker-end="url(#arrow)"/>
   <path d="M1218 320 H1324" class="line" marker-end="url(#arrow)"/>
-  <path d="M1218 641 H1324" class="line dash" marker-end="url(#arrow)"/>
+  <path d="M1218 651 H1324" class="line dash" marker-end="url(#arrow)"/>
   <path d="M1110 374 V426" class="line" marker-end="url(#arrow)"/>
   <path d="M1110 536 V588" class="line" marker-end="url(#arrow)"/>
-  <path d="M1110 698 V750" class="line" marker-end="url(#arrow)"/>
+  <path d="M1110 714 V750" class="line" marker-end="url(#arrow)"/>
 
   <rect x="438" y="852" width="1082" height="44" rx="22" fill="#FFFFFF" opacity="0.9"/>
-  <text x="468" y="880" class="note">Production: infrastructure-as-words.com + api.infrastructure-as-words.com • Development: dev.infrastructure-as-words.com + api.dev.infrastructure-as-words.com</text>
+  <text x="468" y="880" class="noteSmall">Production: infrastructure-as-words.com + api.infrastructure-as-words.com • Development: dev.infrastructure-as-words.com + api.dev.infrastructure-as-words.com</text>
 </svg>

@@ -112,6 +112,44 @@ The editable draw.io source for the platform diagram lives at
   [`infra/modules/submission-data/submission-data.tftest.hcl`](./infra/modules/submission-data/submission-data.tftest.hcl),
   [`infra/modules/cognito-web-client/cognito-web-client.tftest.hcl`](./infra/modules/cognito-web-client/cognito-web-client.tftest.hcl)
 
+## AI Review Evidence
+
+This repo includes a custom PR reviewer that I designed for the submission. The
+comment graders see on `main` pull requests is produced by our own workflow,
+script, and repo-owned requirement set:
+
+- workflow:
+  [`.github/workflows/pr-review.yml`](./.github/workflows/pr-review.yml)
+- review runner:
+  [`scripts/support/review-pull-request.ts`](./scripts/support/review-pull-request.ts)
+- review policy:
+  [`tools/pr-review-requirements.json`](./tools/pr-review-requirements.json)
+
+The AI reviewer checks:
+
+- strict TypeScript and runtime validation
+- no hardcoded secrets or sensitive runtime config
+- IAM least privilege and safe Terraform changes
+- Terraform module quality, docs, and tests
+- observability and operational maturity
+- challenge evidence artifacts and grader docs
+- tests for user-visible and security-relevant changes
+
+Reviewer examples:
+
+- [PR #10](https://github.com/zelikore/infrastructure-as-words/pull/10):
+  AI review comment on shared-auth config and test coverage
+- [PR #7](https://github.com/zelikore/infrastructure-as-words/pull/7):
+  AI review comment on branch flow, OIDC trust, and workflow changes
+- [PR #8](https://github.com/zelikore/infrastructure-as-words/pull/8):
+  closed validation PR showing the required source-branch guard fail for a
+  non-`development` PR
+
+The preserved examples currently show passing AI review comments. The reviewer
+is configured to block on critical findings, especially secrets/runtime config
+and overly broad IAM. For the live example, see
+[open pull requests](https://github.com/zelikore/infrastructure-as-words/pulls?q=is%3Apr+is%3Aopen).
+
 ## Where To Look
 
 - `web/`
