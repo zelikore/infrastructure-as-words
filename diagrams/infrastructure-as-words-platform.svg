@@ -1,101 +1,129 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1480" height="860" viewBox="0 0 1480 860" fill="none">
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="980" viewBox="0 0 1600 980" fill="none">
   <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1600" y2="980" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F7F2E9"/>
+      <stop offset="1" stop-color="#EEF4FB"/>
+    </linearGradient>
     <style>
-      .title { font: 700 30px "SF Pro Display", "Inter", sans-serif; fill: #102030; }
-      .label { font: 600 18px "SF Pro Display", "Inter", sans-serif; fill: #102030; }
-      .meta { font: 500 13px "SF Pro Text", "Inter", sans-serif; fill: #4a5b6d; }
-      .small { font: 600 12px "SF Pro Text", "Inter", sans-serif; fill: #36506b; letter-spacing: .08em; text-transform: uppercase; }
-      .line { stroke: #38546f; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
-      .dash { stroke-dasharray: 8 8; }
+      .title { font: 700 34px "SF Pro Display", "Inter", sans-serif; fill: #0f2438; }
+      .subtitle { font: 500 16px "SF Pro Text", "Inter", sans-serif; fill: #49627c; }
+      .section { font: 700 13px "SF Pro Text", "Inter", sans-serif; fill: #35526c; letter-spacing: .16em; text-transform: uppercase; }
+      .label { font: 700 22px "SF Pro Display", "Inter", sans-serif; fill: #10253a; }
+      .body { font: 500 14px "SF Pro Text", "Inter", sans-serif; fill: #4d6175; }
+      .note { font: 600 14px "SF Pro Text", "Inter", sans-serif; fill: #27435f; }
+      .line { stroke: #3e5e79; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+      .dash { stroke-dasharray: 9 9; }
     </style>
     <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
-      <path d="M 0 0 L 10 5 L 0 10 z" fill="#38546f"/>
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#3e5e79"/>
     </marker>
   </defs>
 
-  <rect width="1480" height="860" rx="36" fill="#f6f1e8"/>
-  <text x="64" y="78" class="title">Infrastructure as Words</text>
-  <text x="64" y="108" class="meta">Shared auth, branch-based delivery, Lambda orchestration, governed Bedrock generation, durable history, artifact storage, and CloudWatch observability.</text>
+  <rect width="1600" height="980" rx="36" fill="url(#bg)"/>
 
-  <rect x="48" y="150" width="242" height="630" rx="28" fill="#fdf9f2" stroke="#d4c5b0"/>
-  <text x="72" y="188" class="small">Experience</text>
+  <rect x="52" y="42" width="1496" height="104" rx="28" fill="#FFFFFF" opacity="0.86"/>
+  <text x="80" y="92" class="title">Infrastructure as Words • Runtime Architecture</text>
+  <text x="80" y="122" class="subtitle">Static SPA, shared auth, Lambda orchestration, Bedrock generation, durable run history, artifact downloads, and observability.</text>
 
-  <rect x="72" y="222" width="194" height="84" rx="24" fill="#e8f1ff" stroke="#7aa6d9"/>
-  <text x="94" y="258" class="label">Browser</text>
-  <text x="94" y="284" class="meta">Signed-out landing, signed-in workbench, React Flow run detail.</text>
+  <rect x="52" y="182" width="308" height="738" rx="32" fill="#FCF8F1" stroke="#D9CBB9"/>
+  <text x="80" y="228" class="section">User Surface</text>
 
-  <rect x="72" y="352" width="194" height="84" rx="24" fill="#ecf6ee" stroke="#7db08a"/>
-  <text x="94" y="388" class="label">CloudFront + S3 SPA</text>
-  <text x="94" y="414" class="meta">Static Next.js export served at dev and prod domains.</text>
+  <rect x="80" y="258" width="252" height="110" rx="28" fill="#E8F2FF" stroke="#7DA7D6"/>
+  <text x="108" y="302" class="label">Browser</text>
+  <text x="108" y="332" class="body">Signed-out landing and signed-in workbench.</text>
+  <text x="108" y="356" class="body">React Flow diagrams, history, and admin UI.</text>
 
-  <rect x="72" y="482" width="194" height="84" rx="24" fill="#f6eedf" stroke="#be9b5b"/>
-  <text x="94" y="518" class="label">Shared Cognito Hosted UI</text>
-  <text x="94" y="544" class="meta">Single auth domain used by both environments.</text>
+  <rect x="80" y="420" width="252" height="116" rx="28" fill="#EEF8F0" stroke="#78AE8C"/>
+  <text x="108" y="464" class="label">CloudFront + S3 SPA</text>
+  <text x="108" y="494" class="body">Immutable static Next.js export.</text>
+  <text x="108" y="518" class="body">Served at the dev and prod app domains.</text>
 
-  <rect x="72" y="612" width="194" height="112" rx="24" fill="#efe9fb" stroke="#8b79bd"/>
-  <text x="94" y="648" class="label">Branch Delivery</text>
-  <text x="94" y="674" class="meta">Push to dev → deploy dev</text>
-  <text x="94" y="696" class="meta">Push to prod → deploy auth + prod</text>
+  <rect x="80" y="588" width="252" height="122" rx="28" fill="#F7EEDC" stroke="#BF9A57"/>
+  <text x="108" y="632" class="label">Shared Cognito Hosted UI</text>
+  <text x="108" y="662" class="body">One hosted auth domain for both environments.</text>
+  <text x="108" y="688" class="note">auth.infrastructure-as-words.com</text>
 
-  <rect x="340" y="150" width="416" height="630" rx="28" fill="#fbfaf7" stroke="#d4c5b0"/>
-  <text x="364" y="188" class="small">Runtime</text>
+  <rect x="80" y="764" width="252" height="118" rx="28" fill="#EEE8FB" stroke="#8D79C0"/>
+  <text x="108" y="808" class="label">User flow</text>
+  <text x="108" y="838" class="body">Sign in → request infra → review diagram.</text>
+  <text x="108" y="862" class="body">Download zip → revisit history.</text>
 
-  <rect x="368" y="228" width="360" height="96" rx="24" fill="#e9f4ff" stroke="#709fd6"/>
-  <text x="394" y="266" class="label">API Gateway</text>
-  <text x="394" y="292" class="meta">JWT-protected HTTP API for submissions, history, admin settings, and health.</text>
+  <rect x="410" y="182" width="510" height="738" rx="32" fill="#FAFBFC" stroke="#D6DCE3"/>
+  <text x="438" y="228" class="section">Application Runtime</text>
 
-  <rect x="368" y="380" width="360" height="118" rx="24" fill="#e8f5f0" stroke="#5caa8d"/>
-  <text x="394" y="418" class="label">Lambda API Service</text>
-  <text x="394" y="444" class="meta">Input validation, generation orchestration, artifact packaging, cost accounting,</text>
-  <text x="394" y="466" class="meta">admin checks via SSM, and structured JSON logging.</text>
+  <rect x="438" y="260" width="454" height="114" rx="28" fill="#EAF4FF" stroke="#719FD4"/>
+  <text x="468" y="304" class="label">API Gateway</text>
+  <text x="468" y="334" class="body">JWT-protected HTTP API.</text>
+  <text x="468" y="358" class="body">Health, submissions, history, run detail, and admin settings.</text>
 
-  <rect x="368" y="560" width="360" height="144" rx="24" fill="#f4efe5" stroke="#b59255"/>
-  <text x="394" y="598" class="label">Bedrock Review + Generation Control</text>
-  <text x="394" y="624" class="meta">Governed module catalog, prompt shaping, output normalization,</text>
-  <text x="394" y="646" class="meta">budget reservations, and PR review against repo-owned requirements.</text>
+  <rect x="438" y="426" width="454" height="162" rx="28" fill="#EAF7F1" stroke="#67AA8E"/>
+  <text x="468" y="470" class="label">Lambda API Service</text>
+  <text x="468" y="500" class="body">Strict validation and auth gating.</text>
+  <text x="468" y="524" class="body">Async generation orchestration, artifact packaging,</text>
+  <text x="468" y="548" class="body">cost tracking, SSM-backed admin checks, and logs.</text>
+  <text x="468" y="580" class="note">Code: lambda.ts + generation-service.ts</text>
 
-  <rect x="804" y="150" width="300" height="630" rx="28" fill="#fbfaf7" stroke="#d4c5b0"/>
-  <text x="828" y="188" class="small">State</text>
+  <rect x="438" y="640" width="454" height="190" rx="28" fill="#F6F0E5" stroke="#B89458"/>
+  <text x="468" y="684" class="label">Bedrock Generation Layer</text>
+  <text x="468" y="714" class="body">Governance-aware prompt shaping from settings and</text>
+  <text x="468" y="738" class="body">module metadata, plus output normalization.</text>
+  <text x="468" y="762" class="body">Budget reservation, cost accounting, and</text>
+  <text x="468" y="786" class="body">Terraform starter generation.</text>
+  <text x="468" y="816" class="note">Code: bedrock-generator.ts</text>
 
-  <rect x="832" y="238" width="244" height="104" rx="24" fill="#eef8f2" stroke="#72a488"/>
-  <text x="858" y="276" class="label">DynamoDB</text>
-  <text x="858" y="302" class="meta">Submission history, run detail, governance settings, and budget state.</text>
+  <rect x="970" y="182" width="276" height="738" rx="32" fill="#FCFBF8" stroke="#D9D1C5"/>
+  <text x="998" y="228" class="section">State And Control</text>
 
-  <rect x="832" y="396" width="244" height="104" rx="24" fill="#edf5ff" stroke="#709fd6"/>
-  <text x="858" y="434" class="label">S3 Artifacts</text>
-  <text x="858" y="460" class="meta">Generated Terraform zip archives with presigned downloads.</text>
+  <rect x="998" y="258" width="220" height="116" rx="26" fill="#EFF8F1" stroke="#74A586"/>
+  <text x="1024" y="302" class="label">DynamoDB</text>
+  <text x="1024" y="332" class="body">Run summary and run detail.</text>
+  <text x="1024" y="356" class="body">Governance settings and monthly budget state.</text>
 
-  <rect x="832" y="554" width="244" height="118" rx="24" fill="#f9efe8" stroke="#c88f6a"/>
-  <text x="858" y="592" class="label">SSM Parameter Store</text>
-  <text x="858" y="618" class="meta">Admin email and other sensitive runtime configuration.</text>
+  <rect x="998" y="426" width="220" height="110" rx="26" fill="#EDF5FF" stroke="#709FD6"/>
+  <text x="1024" y="470" class="label">S3 Artifacts</text>
+  <text x="1024" y="500" class="body">Terraform zip archives.</text>
+  <text x="1024" y="524" class="body">Presigned download links.</text>
 
-  <rect x="1148" y="150" width="284" height="630" rx="28" fill="#fbfaf7" stroke="#d4c5b0"/>
-  <text x="1172" y="188" class="small">Operations</text>
+  <rect x="998" y="588" width="220" height="110" rx="26" fill="#FAEFE8" stroke="#C88F6A"/>
+  <text x="1024" y="632" class="label">SSM Parameter Store</text>
+  <text x="1024" y="662" class="body">Admin email and sensitive runtime config.</text>
+  <text x="1024" y="686" class="body">Kept outside source control.</text>
 
-  <rect x="1176" y="232" width="228" height="112" rx="24" fill="#ececec" stroke="#808080"/>
-  <text x="1202" y="270" class="label">CloudWatch</text>
-  <text x="1202" y="296" class="meta">Structured logs, alarms, dashboards, and API/Lambda telemetry.</text>
+  <rect x="998" y="750" width="220" height="110" rx="26" fill="#F0ECFF" stroke="#8D79C0"/>
+  <text x="1024" y="794" class="label">Module catalog</text>
+  <text x="1024" y="824" class="body">Terraform module metadata and docs.</text>
+  <text x="1024" y="848" class="body">Reused for governance and prompting.</text>
 
-  <rect x="1176" y="396" width="228" height="104" rx="24" fill="#f3ecff" stroke="#8b79bd"/>
-  <text x="1202" y="434" class="label">SNS Alerts</text>
-  <text x="1202" y="460" class="meta">Environment alert topics for auth, API, and data health signals.</text>
+  <rect x="1296" y="182" width="252" height="738" rx="32" fill="#FBFCFE" stroke="#D6DCE3"/>
+  <text x="1324" y="228" class="section">Observability</text>
 
-  <rect x="1176" y="560" width="228" height="130" rx="24" fill="#eef3ff" stroke="#709fd6"/>
-  <text x="1202" y="598" class="label">GitHub Actions</text>
-  <text x="1202" y="624" class="meta">CI, Bedrock PR review, dev deploys, and prod auth + prod deploys.</text>
+  <rect x="1324" y="258" width="196" height="128" rx="26" fill="#ECECEC" stroke="#818181"/>
+  <text x="1348" y="302" class="label">CloudWatch</text>
+  <text x="1348" y="332" class="body">Structured logs and API access logs.</text>
+  <text x="1348" y="356" class="body">Alarms and dashboards for the app.</text>
 
-  <path d="M266 264 H344" class="line" marker-end="url(#arrow)"/>
-  <path d="M266 394 H344" class="line" marker-end="url(#arrow)"/>
-  <path d="M266 524 H344" class="line" marker-end="url(#arrow)"/>
-  <path d="M548 324 V376" class="line" marker-end="url(#arrow)"/>
-  <path d="M548 498 V556" class="line" marker-end="url(#arrow)"/>
-  <path d="M728 428 H828" class="line" marker-end="url(#arrow)"/>
-  <path d="M728 442 C 792 442, 792 442, 828 448" class="line dash" marker-end="url(#arrow)"/>
-  <path d="M728 620 H832" class="line" marker-end="url(#arrow)"/>
-  <path d="M956 342 V392" class="line" marker-end="url(#arrow)"/>
-  <path d="M956 500 V554" class="line" marker-end="url(#arrow)"/>
-  <path d="M1106 286 H1172" class="line" marker-end="url(#arrow)"/>
-  <path d="M1106 448 H1172" class="line" marker-end="url(#arrow)"/>
-  <path d="M1106 612 H1172" class="line" marker-end="url(#arrow)"/>
-  <path d="M290 668 C 390 740, 1170 740, 1290 690" class="line dash" marker-end="url(#arrow)"/>
+  <rect x="1324" y="444" width="196" height="112" rx="26" fill="#F3ECFF" stroke="#8D79C0"/>
+  <text x="1348" y="488" class="label">SNS alerts</text>
+  <text x="1348" y="518" class="body">Environment notifications for key alarms.</text>
+
+  <rect x="1324" y="614" width="196" height="174" rx="26" fill="#EEF3FF" stroke="#719FD4"/>
+  <text x="1348" y="658" class="label">Admin visibility</text>
+  <text x="1348" y="688" class="body">The admin page links to the dashboard,</text>
+  <text x="1348" y="712" class="body">alarms, log groups, and notifications</text>
+  <text x="1348" y="736" class="body">in the AWS console.</text>
+
+  <path d="M332 313 H438" class="line" marker-end="url(#arrow)"/>
+  <path d="M332 478 H438" class="line" marker-end="url(#arrow)"/>
+  <path d="M332 649 H438" class="line dash" marker-end="url(#arrow)"/>
+  <path d="M892 318 H998" class="line" marker-end="url(#arrow)"/>
+  <path d="M892 498 H998" class="line" marker-end="url(#arrow)"/>
+  <path d="M892 694 H998" class="line" marker-end="url(#arrow)"/>
+  <path d="M1218 320 H1324" class="line" marker-end="url(#arrow)"/>
+  <path d="M1218 641 H1324" class="line dash" marker-end="url(#arrow)"/>
+  <path d="M1110 374 V426" class="line" marker-end="url(#arrow)"/>
+  <path d="M1110 536 V588" class="line" marker-end="url(#arrow)"/>
+  <path d="M1110 698 V750" class="line" marker-end="url(#arrow)"/>
+
+  <rect x="438" y="852" width="1082" height="44" rx="22" fill="#FFFFFF" opacity="0.9"/>
+  <text x="468" y="880" class="note">Production: infrastructure-as-words.com + api.infrastructure-as-words.com • Development: dev.infrastructure-as-words.com + api.dev.infrastructure-as-words.com</text>
 </svg>

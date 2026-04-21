@@ -28,7 +28,7 @@ module "application_platform" {
   cognito_write_scope          = local.cognito_write_scope
   bedrock_model_ids            = var.bedrock_model_ids
   bedrock_invoke_resource_arns = var.bedrock_invoke_resource_arns
-  admin_email_allowlist        = [nonsensitive(data.aws_ssm_parameter.admin_email.value)]
+  admin_email_allowlist        = local.admin_email_allowlist
   admin_email_parameter_name   = data.terraform_remote_state.shared_auth.outputs.admin_email_parameter_name
   admin_email_parameter_arn    = data.terraform_remote_state.shared_auth.outputs.admin_email_parameter_arn
   content_security_policy      = local.content_security_policy

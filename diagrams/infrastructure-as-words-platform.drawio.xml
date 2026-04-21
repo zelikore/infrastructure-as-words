@@ -16,7 +16,7 @@
         <mxCell id="auth" value="Shared Cognito Hosted UI&#xa;auth.infrastructure-as-words.com" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f6eedf;strokeColor=#be9b5b;" vertex="1" parent="1">
           <mxGeometry x="70" y="480" width="195" height="88" as="geometry"/>
         </mxCell>
-        <mxCell id="branches" value="Branch Delivery&#xa;dev -&amp;gt; deploy dev&#xa;prod -&amp;gt; deploy auth + prod" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#efe9fb;strokeColor=#8b79bd;" vertex="1" parent="1">
+        <mxCell id="branches" value="Branch Delivery&#xa;development -&amp;gt; deploy dev&#xa;main -&amp;gt; deploy auth + prod" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#efe9fb;strokeColor=#8b79bd;" vertex="1" parent="1">
           <mxGeometry x="70" y="620" width="195" height="108" as="geometry"/>
         </mxCell>
         <mxCell id="runtime" value="Runtime" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fbfaf7;strokeColor=#d4c5b0;fontStyle=1;" vertex="1" parent="1">
@@ -52,7 +52,7 @@
         <mxCell id="sns" value="SNS Alerts&#xa;Environment notifications" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f3ecff;strokeColor=#8b79bd;" vertex="1" parent="1">
           <mxGeometry x="1175" y="390" width="225" height="96" as="geometry"/>
         </mxCell>
-        <mxCell id="gha" value="GitHub Actions&#xa;CI, AI PR review, dev deploy, auth + prod deploy" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#eef3ff;strokeColor=#709fd6;" vertex="1" parent="1">
+        <mxCell id="gha" value="GitHub Actions&#xa;CI, AI PR review, development deploy, auth + prod deploy" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#eef3ff;strokeColor=#709fd6;" vertex="1" parent="1">
           <mxGeometry x="1175" y="555" width="225" height="122" as="geometry"/>
         </mxCell>
         <mxCell id="e1" style="endArrow=block;html=1;rounded=0;" edge="1" parent="1" source="browser" target="api-gateway">

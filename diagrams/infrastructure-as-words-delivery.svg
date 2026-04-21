@@ -1,0 +1,124 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="980" viewBox="0 0 1600 980" fill="none">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1600" y2="980" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F2F7FB"/>
+      <stop offset="1" stop-color="#F8F1E7"/>
+    </linearGradient>
+    <style>
+      .title { font: 700 34px "SF Pro Display", "Inter", sans-serif; fill: #0f2438; }
+      .subtitle { font: 500 16px "SF Pro Text", "Inter", sans-serif; fill: #49627c; }
+      .section { font: 700 13px "SF Pro Text", "Inter", sans-serif; fill: #35526c; letter-spacing: .16em; text-transform: uppercase; }
+      .label { font: 700 22px "SF Pro Display", "Inter", sans-serif; fill: #10253a; }
+      .body { font: 500 14px "SF Pro Text", "Inter", sans-serif; fill: #4d6175; }
+      .note { font: 600 14px "SF Pro Text", "Inter", sans-serif; fill: #27435f; }
+      .line { stroke: #3e5e79; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+      .dash { stroke-dasharray: 9 9; }
+    </style>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#3e5e79"/>
+    </marker>
+  </defs>
+
+  <rect width="1600" height="980" rx="36" fill="url(#bg)"/>
+
+  <rect x="52" y="42" width="1496" height="104" rx="28" fill="#FFFFFF" opacity="0.88"/>
+  <text x="80" y="92" class="title">Infrastructure as Words • Delivery And AWS Trust</text>
+  <text x="80" y="122" class="subtitle">GitHub Actions uses OIDC with branch- and workflow-scoped trust. development deploys dev; main deploys shared auth and prod.</text>
+
+  <rect x="52" y="186" width="300" height="736" rx="32" fill="#FCF8F1" stroke="#D9CBB9"/>
+  <text x="82" y="232" class="section">Local Repo</text>
+
+  <rect x="80" y="268" width="244" height="132" rx="28" fill="#EAF4FF" stroke="#739FD2"/>
+  <text x="108" y="312" class="label">Agent guidance</text>
+  <text x="108" y="342" class="body">Repo instructions make the AI workflow</text>
+  <text x="108" y="366" class="body">explicit and reviewable.</text>
+  <text x="108" y="390" class="note">AGENTS.md + scoped handbooks</text>
+
+  <rect x="80" y="452" width="244" height="156" rx="28" fill="#EEF8F0" stroke="#74AB8A"/>
+  <text x="108" y="496" class="label">Pre-commit gate</text>
+  <text x="108" y="526" class="body">Before a commit is accepted, the repo runs</text>
+  <text x="108" y="550" class="body">typed linting plus Terraform validation</text>
+  <text x="108" y="574" class="body">and module tests.</text>
+  <text x="108" y="602" class="note">.githooks/pre-commit</text>
+
+  <rect x="80" y="660" width="244" height="174" rx="28" fill="#F5ECFF" stroke="#8D79C0"/>
+  <text x="108" y="704" class="label">What gets checked</text>
+  <text x="108" y="734" class="body">Typed ESLint, repo rules, import contracts,</text>
+  <text x="108" y="758" class="body">file budgets, Terraform validate, and</text>
+  <text x="108" y="782" class="body">terraform test for committed modules.</text>
+
+  <rect x="400" y="186" width="360" height="736" rx="32" fill="#FAFBFC" stroke="#D6DCE3"/>
+  <text x="430" y="232" class="section">GitHub Flow</text>
+
+  <rect x="430" y="270" width="300" height="120" rx="28" fill="#EDF5FF" stroke="#719FD4"/>
+  <text x="462" y="314" class="label">development branch</text>
+  <text x="462" y="344" class="body">Long-running integration branch.</text>
+  <text x="462" y="368" class="body">Any push runs CI and deploys dev.</text>
+
+  <rect x="430" y="444" width="300" height="142" rx="28" fill="#F6F0E5" stroke="#B89558"/>
+  <text x="462" y="488" class="label">Pull request to main</text>
+  <text x="462" y="518" class="body">Only development → main is allowed.</text>
+  <text x="462" y="542" class="body">The PR runs CI and the Bedrock review agent</text>
+  <text x="462" y="566" class="body">against repo-owned requirements.</text>
+
+  <rect x="430" y="640" width="300" height="158" rx="28" fill="#EEE8FB" stroke="#8D79C0"/>
+  <text x="462" y="684" class="label">main branch</text>
+  <text x="462" y="714" class="body">Protected production branch.</text>
+  <text x="462" y="738" class="body">A merge deploys shared auth first,</text>
+  <text x="462" y="762" class="body">then the prod application stack.</text>
+
+  <rect x="808" y="186" width="374" height="736" rx="32" fill="#FBFCFE" stroke="#D6DCE3"/>
+  <text x="838" y="232" class="section">GitHub Actions + OIDC</text>
+
+  <rect x="838" y="268" width="314" height="124" rx="28" fill="#EEF3FF" stroke="#739FD2"/>
+  <text x="870" y="312" class="label">CI workflow</text>
+  <text x="870" y="342" class="body">Workflow lint, repo checks, build artifacts,</text>
+  <text x="870" y="366" class="body">and the branch-source guard.</text>
+  <text x="870" y="392" class="note">.github/workflows/ci.yml</text>
+
+  <rect x="838" y="446" width="314" height="132" rx="28" fill="#EFF8F1" stroke="#74AB8A"/>
+  <text x="870" y="490" class="label">Deploy workflow</text>
+  <text x="870" y="520" class="body">Resolves the target, assumes the matching</text>
+  <text x="870" y="544" class="body">AWS role, and deploys dev or auth + prod.</text>
+  <text x="870" y="570" class="note">.github/workflows/deploy.yml</text>
+
+  <rect x="838" y="632" width="314" height="180" rx="28" fill="#FAEFE8" stroke="#C98F69"/>
+  <text x="870" y="676" class="label">OIDC trust bootstrap</text>
+  <text x="870" y="706" class="body">Creates the GitHub OIDC provider, the dev,</text>
+  <text x="870" y="730" class="body">prod, and PR review roles, plus the repo</text>
+  <text x="870" y="754" class="body">variables consumed by Actions.</text>
+  <text x="870" y="784" class="note">scripts/configure-github-actions-oidc.sh</text>
+
+  <rect x="1230" y="186" width="318" height="736" rx="32" fill="#FCFBF8" stroke="#D9D1C5"/>
+  <text x="1260" y="232" class="section">AWS Targets</text>
+
+  <rect x="1260" y="268" width="258" height="122" rx="28" fill="#EAF7F1" stroke="#67AA8E"/>
+  <text x="1290" y="312" class="label">Dev role + dev stack</text>
+  <text x="1290" y="342" class="body">Trusted only for the development</text>
+  <text x="1290" y="366" class="body">branch deploy workflow.</text>
+
+  <rect x="1260" y="444" width="258" height="122" rx="28" fill="#F7EEDC" stroke="#BF9A57"/>
+  <text x="1290" y="488" class="label">Review role</text>
+  <text x="1290" y="518" class="body">Trusted only for the PR review</text>
+  <text x="1290" y="542" class="body">workflow on pull requests.</text>
+
+  <rect x="1260" y="620" width="258" height="162" rx="28" fill="#F3ECFF" stroke="#8D79C0"/>
+  <text x="1290" y="664" class="label">Prod role + shared auth + prod stack</text>
+  <text x="1290" y="694" class="body">Trusted only for the main branch</text>
+  <text x="1290" y="718" class="body">deploy workflow.</text>
+  <text x="1290" y="748" class="body">This keeps dev and prod access separate</text>
+  <text x="1290" y="772" class="body">without storing AWS keys in GitHub.</text>
+
+  <path d="M324 530 H430" class="line" marker-end="url(#arrow)"/>
+  <path d="M580 390 V444" class="line" marker-end="url(#arrow)"/>
+  <path d="M580 586 V640" class="line" marker-end="url(#arrow)"/>
+  <path d="M730 332 H838" class="line" marker-end="url(#arrow)"/>
+  <path d="M730 512 H838" class="line" marker-end="url(#arrow)"/>
+  <path d="M730 720 H838" class="line dash" marker-end="url(#arrow)"/>
+  <path d="M1152 332 H1260" class="line" marker-end="url(#arrow)"/>
+  <path d="M1152 512 H1260" class="line" marker-end="url(#arrow)"/>
+  <path d="M1152 722 H1260" class="line" marker-end="url(#arrow)"/>
+
+  <rect x="430" y="838" width="1088" height="50" rx="25" fill="#FFFFFF" opacity="0.9"/>
+  <text x="464" y="870" class="note">Custom PR agent: scripts/support/review-pull-request.ts • Review policy: tools/pr-review-requirements.json • OIDC keeps AWS access short-lived and workflow-scoped.</text>
+</svg>
