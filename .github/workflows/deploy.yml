@@ -173,7 +173,15 @@ jobs:
           path: .
 
       - name: Restore deployable artifacts
-        run: tar -xzf deploy-assets.tgz
+        shell: bash
+        run: |
+          archive_path="$(find . -maxdepth 3 -name deploy-assets.tgz -print -quit)"
+          if [[ -z "${archive_path}" ]]; then
+            echo "Could not find deploy-assets.tgz after artifact download." >&2
+            exit 1
+          fi
+
+          tar -xzf "${archive_path}"
 
       - name: Deploy shared auth stack
         if: needs.build.outputs.deploy_target == 'all' || needs.build.outputs.deploy_target == 'auth' || needs.build.outputs.deploy_target == 'prod'
