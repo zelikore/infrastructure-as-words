@@ -1,27 +1,32 @@
 # Release Flow
 
-This repo uses a two-branch delivery model:
+This repo now uses a long-lived `development` branch plus a protected `main`
+branch.
 
-- `dev` is the integration branch. Pushes to `dev` run CI and deploy the `dev`
+## Branches
+
+- `development` is the integration branch. Any push to `development`, whether it
+  came from a merge or a direct commit, runs CI and deploys the `dev`
   environment.
-- `prod` is the production branch. Pushes to `prod` run CI, deploy the shared
-  auth stack, then deploy the `prod` environment.
+- `main` is the protected production branch. Pushes to `main` run CI, deploy
+  the shared auth stack, then deploy the `prod` environment.
 
-## Pull request review
+## Pull request policy
 
-Pull requests are reviewed in three layers:
-
-1. Standard CI runs `npm run check` and `npm run build:all`.
-2. A Bedrock-powered PR review job reads the repo-owned requirements from
-   `tools/pr-review-requirements.json`.
-3. The PR template requires the author to explain how AI was used and what they
-   manually verified.
+- Pull requests into `main` are only valid when the source branch is
+  `development`.
+- The CI workflow contains an explicit guard job named
+  `Require development source branch`. `main` branch protection requires that
+  job, so a PR from any other branch cannot merge.
+- The Bedrock-powered PR review job only runs for pull requests into `main`.
 
 ## Why this exists for the submission
 
-The challenge asks for AI-native development workflow evidence and operational
-discipline. This flow makes both visible:
+The challenge asks for AI-native workflow evidence and operational discipline.
+This release model makes both visible:
 
-- the branch promotion model is explicit
-- PRs have repeatable AI review against configured requirements
-- reviewers can inspect a real PR, not just a claim that AI was used
+- `development` is a stable long-running environment that graders can inspect
+  while work continues
+- promotion to `main` is deliberate and reviewable
+- the AI review lane is reserved for the production promotion step instead of
+  running on every feature branch

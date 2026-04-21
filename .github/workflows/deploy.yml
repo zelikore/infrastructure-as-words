@@ -3,8 +3,8 @@ name: Deploy
 on:
   push:
     branches:
-      - dev
-      - prod
+      - development
+      - main
   workflow_dispatch:
     inputs:
       target:
@@ -43,9 +43,9 @@ jobs:
           target=""
           if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
             target="${{ inputs.target }}"
-          elif [[ "${GITHUB_REF_NAME}" == "dev" ]]; then
+          elif [[ "${GITHUB_REF_NAME}" == "development" ]]; then
             target="dev"
-          elif [[ "${GITHUB_REF_NAME}" == "prod" ]]; then
+          elif [[ "${GITHUB_REF_NAME}" == "main" ]]; then
             target="prod"
           else
             echo "Unsupported ref ${GITHUB_REF_NAME}." >&2
@@ -92,14 +92,14 @@ jobs:
         env:
           DEPLOY_TARGET: ${{ needs.build.outputs.deploy_target }}
         run: |
-          if [[ "${DEPLOY_TARGET}" == "dev" && "${GITHUB_REF}" != "refs/heads/dev" ]]; then
-            echo "Run dev deploys from the dev branch." >&2
+          if [[ "${DEPLOY_TARGET}" == "dev" && "${GITHUB_REF}" != "refs/heads/development" ]]; then
+            echo "Run dev deploys from the development branch." >&2
             exit 1
           fi
 
           if [[ "${DEPLOY_TARGET}" == "auth" || "${DEPLOY_TARGET}" == "prod" || "${DEPLOY_TARGET}" == "all" ]]; then
-            if [[ "${GITHUB_REF}" != "refs/heads/prod" ]]; then
-              echo "Run auth/prod deploys from the prod branch." >&2
+            if [[ "${GITHUB_REF}" != "refs/heads/main" ]]; then
+              echo "Run auth/prod deploys from the main branch." >&2
               exit 1
             fi
           fi

@@ -12,6 +12,7 @@ import { WorkspaceOverview } from "./workspace-overview";
 import { WorkspaceSidebar } from "./workspace-sidebar";
 
 const averageDurationFallbackMs = 95_000;
+const publicRepoUrl = "https://github.com/zelikore/infrastructure-as-words";
 
 export function AppShell() {
   const {
@@ -84,6 +85,20 @@ export function AppShell() {
       <div
         className={`iaw-chrome ${sessionSignedIn ? "iaw-chromeWorkspace" : "iaw-chromeLanding"}`}
       >
+        <section className="iaw-challengeBanner" aria-label="Challenge attribution">
+          <p className="iaw-challengeBannerText">
+            Created by Elijah Faviel for the CVS team take-home coding challenge.
+          </p>
+          <a
+            className="iaw-challengeBannerLink"
+            href={publicRepoUrl}
+            target="_blank"
+            rel="noreferrer"
+          >
+            View code
+          </a>
+        </section>
+
         <header className="iaw-header">
           <div className="iaw-brand">
             <span className="iaw-brandMark" aria-hidden="true" />
