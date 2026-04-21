@@ -27,7 +27,7 @@ const region = "us-west-2";
 const hostedZoneId = "Z04489831QPP59H15P0H0";
 const hostedZoneName = "infrastructure-as-words.com";
 
-const defaultPlatformAdminEmail = "elijahfaviel41+iaw-admin@gmail.com";
+const defaultPlatformAdminEmail = "admin@example.com";
 
 export const platformAdminEmail =
   process.env["IAW_ADMIN_EMAIL"]?.trim().toLowerCase() ||

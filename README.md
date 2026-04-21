@@ -41,6 +41,11 @@ DEPLOY_ENV=dev npm run deploy:env
 npm run deploy:all
 ```
 
+For the first shared-auth deployment, set `IAW_ADMIN_EMAIL` explicitly. After
+the shared auth stack exists, `scripts/deploy-auth.sh` will reuse the live
+value from the `"/infrastructure-as-words/admin-email"` SSM parameter so the
+repo does not need a real admin email committed in source.
+
 ## Submission docs
 
 - `AGENTS.md` documents the repo-level AI agent workflow and scoped handbooks.
