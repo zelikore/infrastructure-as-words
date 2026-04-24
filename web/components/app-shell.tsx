@@ -97,23 +97,25 @@ export function AppShell() {
       <div
         className={`iaw-chrome ${sessionSignedIn ? "iaw-chromeWorkspace" : "iaw-chromeLanding"}`}
       >
-        <section
-          className="iaw-challengeBanner"
-          aria-label="Challenge attribution"
-        >
-          <p className="iaw-challengeBannerText">
-            Created by Elijah Faviel for the CVS team take-home coding
-            challenge.
-          </p>
-          <a
-            className="iaw-challengeBannerLink"
-            href={publicRepoUrl}
-            target="_blank"
-            rel="noreferrer"
+        {!sessionSignedIn ? (
+          <section
+            className="iaw-challengeBanner"
+            aria-label="Challenge attribution"
           >
-            View code
-          </a>
-        </section>
+            <p className="iaw-challengeBannerText">
+              Created by Elijah Faviel for the CVS team take-home coding
+              challenge.
+            </p>
+            <a
+              className="iaw-challengeBannerLink"
+              href={publicRepoUrl}
+              target="_blank"
+              rel="noreferrer"
+            >
+              View code
+            </a>
+          </section>
+        ) : null}
 
         <header className="iaw-header">
           <div className="iaw-brand">
