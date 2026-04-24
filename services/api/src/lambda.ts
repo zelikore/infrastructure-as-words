@@ -265,6 +265,8 @@ export const handler = async (
     | { type: string; submissionId: string },
   context: Context,
 ): Promise<APIGatewayProxyStructuredResultV2 | undefined> => {
+  context.callbackWaitsForEmptyEventLoop = false;
+
   if (isGenerateSubmissionEvent(event)) {
     await runSubmissionGeneration(event.submissionId, context.awsRequestId);
     return undefined;

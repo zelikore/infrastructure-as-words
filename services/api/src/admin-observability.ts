@@ -2,6 +2,7 @@ import {
   CloudWatchClient,
   DescribeAlarmsCommand,
   GetMetricDataCommand,
+  type GetMetricDataCommandOutput,
 } from "@aws-sdk/client-cloudwatch";
 import {
   CloudWatchLogsClient,
@@ -50,7 +51,21 @@ const defaultClients: ObservabilityClients = {
   sns: snsClient,
 };
 
-const SNAPSHOT_CACHE_TTL_MS = 15_000;
+const SNAPSHOT_CACHE_TTL_MS = 60_000;
+const CLOUDWATCH_READ_TIMEOUT_MS = 4_000;
+const LOG_READ_TIMEOUT_MS = 2_500;
+const SNS_READ_TIMEOUT_MS = 2_000;
+const LOG_EVENT_FETCH_LIMIT = 100;
+const EMPTY_METRIC_RESPONSE: GetMetricDataCommandOutput = {
+  $metadata: {},
+  MetricDataResults: [],
+};
+
+type ObservabilityReadComponent =
+  | "metrics"
+  | "alarms"
+  | "subscriptions"
+  | "recentEvents";
 
 let cachedSnapshot:
   | {
@@ -60,9 +75,48 @@ let cachedSnapshot:
     }
   | undefined;
 
+const readFailureMessage = (error: unknown): string =>
+  error instanceof Error ? error.message : "Unknown observability read failure.";
+
+const readWithTimeout = async <T>({
+  component,
+  timeoutMs,
+  fallback,
+  read,
+}: {
+  component: ObservabilityReadComponent;
+  timeoutMs: number;
+  fallback: T;
+  read: (abortSignal: AbortSignal) => Promise<T>;
+}): Promise<T> => {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => {
+    controller.abort();
+  }, timeoutMs);
+
+  try {
+    return await read(controller.signal);
+  } catch (error) {
+    console.warn(
+      JSON.stringify({
+        timestamp: new Date().toISOString(),
+        level: "WARN",
+        event_type: "observability_read_failure",
+        component,
+        reason: controller.signal.aborted ? "timeout" : "error",
+        error: readFailureMessage(error),
+      }),
+    );
+    return fallback;
+  } finally {
+    clearTimeout(timeout);
+  }
+};
+
 const readAlarms = async (
   clients: ObservabilityClients,
   environment: ApiEnvironment,
+  abortSignal: AbortSignal,
 ): Promise<ObservabilityAlarm[]> => {
   if (environment.OBSERVABILITY_ALARM_NAMES.length === 0) {
     return [];
@@ -72,6 +126,7 @@ const readAlarms = async (
     new DescribeAlarmsCommand({
       AlarmNames: environment.OBSERVABILITY_ALARM_NAMES,
     }),
+    { abortSignal },
   );
 
   return (response.MetricAlarms ?? [])
@@ -96,6 +151,7 @@ const readAlarms = async (
 const readSubscriptions = async (
   clients: ObservabilityClients,
   environment: ApiEnvironment,
+  abortSignal: AbortSignal,
 ): Promise<ObservabilitySubscription[]> => {
   if (!environment.OBSERVABILITY_ALERTS_TOPIC_ARN) {
     return [];
@@ -105,6 +161,7 @@ const readSubscriptions = async (
     new ListSubscriptionsByTopicCommand({
       TopicArn: environment.OBSERVABILITY_ALERTS_TOPIC_ARN,
     }),
+    { abortSignal },
   );
 
   return (response.Subscriptions ?? []).map((subscription) => ({
@@ -120,6 +177,7 @@ const readSubscriptions = async (
 const readRecentEvents = async (
   clients: ObservabilityClients,
   environment: ApiEnvironment,
+  abortSignal: AbortSignal,
 ): Promise<ObservabilityLogEvent[]> => {
   const sources: Array<{
     source: ObservabilityLogEvent["source"];
@@ -141,8 +199,9 @@ const readRecentEvents = async (
         new FilterLogEventsCommand({
           logGroupName,
           startTime: Date.now() - LOG_LOOKBACK_MS,
-          limit: 50,
+          limit: LOG_EVENT_FETCH_LIMIT,
         }),
+        { abortSignal },
       );
 
       return (response.events ?? [])
@@ -185,16 +244,40 @@ export const loadAdminObservabilitySnapshot = async ({
   const metricDefinitions = buildMetricDefinitions(environment);
   const [metricResponse, alarms, subscriptions, recentEvents] =
     await Promise.all([
-      clients.cloudWatch.send(
-        new GetMetricDataCommand({
-          StartTime: new Date(Date.now() - METRIC_PERIOD_SECONDS * 1_000),
-          EndTime: new Date(),
-          MetricDataQueries: metricDefinitions.map((entry) => entry.query),
-        }),
-      ),
-      readAlarms(clients, environment),
-      readSubscriptions(clients, environment),
-      readRecentEvents(clients, environment),
+      readWithTimeout({
+        component: "metrics",
+        timeoutMs: CLOUDWATCH_READ_TIMEOUT_MS,
+        fallback: EMPTY_METRIC_RESPONSE,
+        read: (abortSignal) =>
+          clients.cloudWatch.send(
+            new GetMetricDataCommand({
+              StartTime: new Date(Date.now() - METRIC_PERIOD_SECONDS * 1_000),
+              EndTime: new Date(),
+              MetricDataQueries: metricDefinitions.map((entry) => entry.query),
+            }),
+            { abortSignal },
+          ),
+      }),
+      readWithTimeout({
+        component: "alarms",
+        timeoutMs: CLOUDWATCH_READ_TIMEOUT_MS,
+        fallback: [],
+        read: (abortSignal) => readAlarms(clients, environment, abortSignal),
+      }),
+      readWithTimeout({
+        component: "subscriptions",
+        timeoutMs: SNS_READ_TIMEOUT_MS,
+        fallback: [],
+        read: (abortSignal) =>
+          readSubscriptions(clients, environment, abortSignal),
+      }),
+      readWithTimeout({
+        component: "recentEvents",
+        timeoutMs: LOG_READ_TIMEOUT_MS,
+        fallback: [],
+        read: (abortSignal) =>
+          readRecentEvents(clients, environment, abortSignal),
+      }),
     ]);
 
   const snapshot = adminObservabilityResponseSchema.parse({
