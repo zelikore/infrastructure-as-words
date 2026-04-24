@@ -5,6 +5,7 @@ import type {
   ObservabilityAlarm,
   ObservabilityServiceSnapshot,
 } from "@infrastructure-as-words/contracts";
+import { buildObservabilitySummary } from "../lib/observability-summary";
 
 type ObservabilityPageProps = {
   snapshot: AdminObservabilityResponse | undefined;
@@ -55,6 +56,7 @@ export function ObservabilityPage({
   const lambda = snapshot ? findService(snapshot, "lambda") : undefined;
   const api = snapshot ? findService(snapshot, "api") : undefined;
   const dynamodb = snapshot ? findService(snapshot, "dynamodb") : undefined;
+  const summary = snapshot ? buildObservabilitySummary(snapshot) : undefined;
 
   return (
     <section className="iaw-observabilityPage iaw-surface">
@@ -98,6 +100,16 @@ export function ObservabilityPage({
 
       {snapshot ? (
         <>
+          {summary ? (
+            <div
+              className={`iaw-observabilitySummary iaw-observabilitySummary${summary.tone[0]?.toUpperCase()}${summary.tone.slice(1)}`}
+            >
+              <p className="iaw-sectionLabel">Status</p>
+              <strong>{summary.title}</strong>
+              <span className="iaw-fieldLabel">{summary.detail}</span>
+            </div>
+          ) : null}
+
           <div className="iaw-observabilityStats">
             <article className="iaw-observabilityStat">
               <span className="iaw-fieldLabel">Active alarms</span>
