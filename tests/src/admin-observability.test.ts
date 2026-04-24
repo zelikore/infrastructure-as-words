@@ -1,7 +1,10 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import type { ApiEnvironment } from "../../services/api/src/environment.js";
-import { isInterestingLogEvent } from "../../services/api/src/admin-observability-shared.js";
+import {
+  isInterestingLogEvent,
+  LOG_LOOKBACK_MS,
+} from "../../services/api/src/admin-observability-shared.js";
 import { loadAdminObservabilitySnapshot } from "../../services/api/src/admin-observability.js";
 
 const environment: ApiEnvironment = {
@@ -79,9 +82,13 @@ void test("admin observability snapshot combines metrics, alarms, subscriptions,
       logs: {
         send: async (command: {
           constructor: { name: string };
-          input: { logGroupName?: string };
+          input: { limit?: number; logGroupName?: string; startTime?: number };
         }) => {
           assert.equal(command.constructor.name, "FilterLogEventsCommand");
+          assert.equal(command.input.limit, 100);
+          const startTime = command.input.startTime;
+          assert.ok(typeof startTime === "number");
+          assert.ok(startTime >= Date.now() - LOG_LOOKBACK_MS - 1_000);
           if (command.input.logGroupName?.includes("/aws/lambda/")) {
             return {
               events: [
@@ -139,6 +146,51 @@ void test("admin observability snapshot combines metrics, alarms, subscriptions,
     snapshot.alarms[0]?.name,
     "infrastructure-as-words-prod-api-5xx",
   );
+});
+
+void test("admin observability snapshot tolerates recent log read failures", async () => {
+  const warnings: string[] = [];
+  const originalWarn = console.warn;
+  console.warn = (...data: unknown[]) => {
+    warnings.push(data.map(String).join(" "));
+  };
+
+  try {
+    const snapshot = await loadAdminObservabilitySnapshot({
+      environment,
+      bypassCache: true,
+      clients: {
+        cloudWatch: {
+          send: async (command) => {
+            switch (command.constructor.name) {
+              case "GetMetricDataCommand":
+                return { MetricDataResults: [] };
+              case "DescribeAlarmsCommand":
+                return { MetricAlarms: [] };
+              default:
+                throw new Error(
+                  `Unexpected CloudWatch command ${command.constructor.name}`,
+                );
+            }
+          },
+        },
+        logs: {
+          send: async () => {
+            throw new Error("CloudWatch Logs read failed");
+          },
+        },
+        sns: {
+          send: async () => ({ Subscriptions: [] }),
+        },
+      },
+    });
+
+    assert.equal(snapshot.recentEvents.length, 0);
+    assert.match(warnings.join("\n"), /observability_read_failure/);
+    assert.match(warnings.join("\n"), /recentEvents/);
+  } finally {
+    console.warn = originalWarn;
+  }
 });
 
 void test("observability log filter keeps API failures and ignores healthy access logs", () => {

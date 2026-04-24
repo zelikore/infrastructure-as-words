@@ -18,7 +18,7 @@ export type MetricDefinition = {
 
 export const METRIC_WINDOW_MINUTES = 60;
 export const METRIC_PERIOD_SECONDS = METRIC_WINDOW_MINUTES * 60;
-export const LOG_LOOKBACK_MS = 24 * 60 * 60 * 1000;
+export const LOG_LOOKBACK_MS = 10 * 60 * 1000;
 export const RECENT_EVENT_LIMIT = 8;
 
 const formatMetricValue = (
